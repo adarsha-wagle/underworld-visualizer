@@ -2,7 +2,8 @@ import React, { useRef, useMemo, useEffect, useState, type JSX } from "react";
 import { Canvas, useFrame, useThree, type RootState } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import SectionVisualizerContainer from "./sections/section_visualizer_container";
+// import SectionVisualizerContainer from "./sections/section_visualizer_container";
+import UnderwaterExploration from "./components/environment/terrain";
 
 // Type definitions
 interface AudioData {
@@ -433,7 +434,9 @@ export default function AudioAquarium(): JSX.Element {
         audioData={audioData}
       /> */}
 
-      <SectionVisualizerContainer />
+      <UnderwaterExploration />
+
+      {/* <SectionVisualizerContainer /> */}
     </div>
   );
 }

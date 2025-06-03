@@ -2,9 +2,8 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stats } from "@react-three/drei";
 
 import AnglerFish from "../components/models/angler-fish";
-import OceanEnvironment from "../components/environment/ocean";
 // import Player from "../components/player/player";
-import Terrain from "../components/environment/terrain";
+// import Terrain, { UnderworldScene } from "../components/environment/terrain";
 import CustomSky from "../components/environment/sky";
 
 function SectionVisualizerContainer() {
