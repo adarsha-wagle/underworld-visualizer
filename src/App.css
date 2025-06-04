@@ -41,14 +41,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -124,5 +116,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "IM Fell English SC", serif;
+    font-weight: 400;
+    font-style: normal;
   }
 }

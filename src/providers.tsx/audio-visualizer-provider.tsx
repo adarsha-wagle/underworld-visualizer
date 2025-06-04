@@ -4,14 +4,30 @@ import {
   useEffect,
   useRef,
   useState,
+  useCallback,
   type ReactNode,
 } from "react";
-import type { IAudioData } from "../types/audio";
 
-const AudioVisualizerContext = createContext<{
+// Simple audio data interface
+export interface IAudioData {
+  bass: number;
+  mid: number;
+  treble: number;
+  overall: number;
+  volume: number;
+  frequencyData: Uint8Array;
+}
+
+interface IAudioVisualizerContext {
   audioData: IAudioData;
-  setUserAudio: (file: File) => void;
-} | null>(null);
+  setAudio: (file?: File) => Promise<void>;
+  play: () => Promise<void>;
+  pause: () => void;
+}
+
+const AudioVisualizerContext = createContext<IAudioVisualizerContext | null>(
+  null
+);
 
 export const useAudioData = () => {
   const context = useContext(AudioVisualizerContext);
@@ -20,89 +36,208 @@ export const useAudioData = () => {
   return context;
 };
 
+// Default audio data
+const DEFAULT_AUDIO_DATA: IAudioData = {
+  bass: 0,
+  mid: 0,
+  treble: 0,
+  overall: 0,
+  volume: 0,
+  frequencyData: new Uint8Array(0),
+};
+
 export const AudioVisualizerProvider = ({
   children,
+  defaultAudioPath = "/audio/default-audio.mp3",
 }: {
   children: ReactNode;
+  defaultAudioPath?: string;
 }) => {
-  const [audioData, setAudioData] = useState<IAudioData>({
-    bass: 0,
-    mid: 0,
-    treble: 0,
-    overall: 0,
-  });
+  const [audioData, setAudioData] = useState<IAudioData>(DEFAULT_AUDIO_DATA);
 
+  // Refs
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const dataArrayRef = useRef<Uint8Array>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const frequencyDataRef = useRef<Uint8Array | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
-  const initAudio = async (src: string | File) => {
-    const audio = new Audio();
-    audio.crossOrigin = "anonymous";
-    audio.loop = true;
-
-    if (src instanceof File) {
-      audio.src = URL.createObjectURL(src);
-    } else {
-      audio.src = src;
+  // Cleanup function
+  const cleanup = useCallback(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
 
-    await audio.play();
-    audioRef.current = audio;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
 
-    const context = new AudioContext();
-    const source = context.createMediaElementSource(audio);
-    const analyser = context.createAnalyser();
-    analyser.fftSize = 256;
+    if (sourceNodeRef.current) {
+      sourceNodeRef.current.disconnect();
+      sourceNodeRef.current = null;
+    }
 
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+    if (audioContextRef.current?.state !== "closed") {
+      audioContextRef.current?.close();
+      audioContextRef.current = null;
+    }
 
-    source.connect(analyser);
-    analyser.connect(context.destination);
-
-    audioContextRef.current = context;
-    analyserRef.current = analyser;
-    dataArrayRef.current = dataArray;
-
-    const update = () => {
-      if (!analyserRef.current || !dataArrayRef.current) return;
-      analyserRef.current.getByteFrequencyData(dataArrayRef.current);
-
-      const data = dataArrayRef.current;
-      const bass = average(data.slice(0, 10)) / 255;
-      const mid = average(data.slice(10, 40)) / 255;
-      const treble = average(data.slice(40)) / 255;
-      const overall = average(data) / 255;
-
-      setAudioData({ bass, mid, treble, overall });
-      requestAnimationFrame(update);
-    };
-
-    update();
-  };
-
-  const setUserAudio = (file: File) => {
-    // Stop any previous audio
-    audioRef.current?.pause();
-    audioRef.current?.removeAttribute("src");
-    audioRef.current?.load();
-
-    initAudio(file);
-  };
-
-  useEffect(() => {
-    // Default audio load
-    initAudio("/audio/ambient.mp3");
+    analyserRef.current = null;
+    frequencyDataRef.current = null;
   }, []);
 
+  // Animation loop for audio analysis
+  const updateAudioData = useCallback(() => {
+    if (!analyserRef.current || !frequencyDataRef.current) {
+      return;
+    }
+
+    analyserRef.current.getByteFrequencyData(frequencyDataRef.current);
+
+    const dataLength = frequencyDataRef.current.length;
+
+    // Calculate frequency bands
+    const bassEnd = Math.floor(dataLength * 0.15);
+    const midEnd = Math.floor(dataLength * 0.5);
+
+    const bass = average(frequencyDataRef.current.slice(0, bassEnd)) / 255;
+    const mid = average(frequencyDataRef.current.slice(bassEnd, midEnd)) / 255;
+    const treble = average(frequencyDataRef.current.slice(midEnd)) / 255;
+    const overall = average(frequencyDataRef.current) / 255;
+    const volume = overall; // Simple volume approximation
+
+    setAudioData({
+      bass,
+      mid,
+      treble,
+      overall,
+      volume,
+      frequencyData: new Uint8Array(frequencyDataRef.current),
+    });
+
+    animationFrameRef.current = requestAnimationFrame(updateAudioData);
+  }, []);
+
+  // Set audio source (file or default)
+  const setAudio = useCallback(
+    async (file?: File) => {
+      try {
+        // Cleanup previous audio
+        cleanup();
+
+        // Create audio context
+        audioContextRef.current = new (window.AudioContext ||
+          (window as any).webkitAudioContext)();
+        const context = audioContextRef.current;
+
+        if (context.state === "suspended") {
+          await context.resume();
+        }
+
+        // Create analyser
+        const analyser = context.createAnalyser();
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.8;
+        analyserRef.current = analyser;
+
+        // Create audio element
+        const audio = new Audio();
+        audio.crossOrigin = "anonymous";
+        audio.loop = !file; // Loop default audio, not custom files
+        audio.volume = 0.7;
+
+        // Set source
+        if (file) {
+          audio.src = URL.createObjectURL(file);
+        } else {
+          audio.src = defaultAudioPath;
+        }
+
+        // Wait for audio to load
+        await new Promise((resolve, reject) => {
+          const handleCanPlay = () => {
+            audio.removeEventListener("canplaythrough", handleCanPlay);
+            audio.removeEventListener("error", handleError);
+            resolve(true);
+          };
+
+          const handleError = () => {
+            audio.removeEventListener("canplaythrough", handleCanPlay);
+            audio.removeEventListener("error", handleError);
+            reject(new Error("Failed to load audio"));
+          };
+
+          audio.addEventListener("canplaythrough", handleCanPlay);
+          audio.addEventListener("error", handleError);
+          audio.load();
+        });
+
+        // Connect audio graph
+        const sourceNode = context.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(context.destination);
+
+        audioRef.current = audio;
+        sourceNodeRef.current = sourceNode;
+
+        // Initialize frequency data array
+        const bufferLength = analyser.frequencyBinCount;
+        frequencyDataRef.current = new Uint8Array(bufferLength);
+
+        // Start analysis loop
+        updateAudioData();
+      } catch (error) {
+        console.error("Failed to set audio:", error);
+        throw error;
+      }
+    },
+    [cleanup, updateAudioData, defaultAudioPath]
+  );
+
+  // Play audio
+  const play = useCallback(async () => {
+    if (audioRef.current) {
+      try {
+        await audioRef.current.play();
+      } catch (error) {
+        console.error("Failed to play audio:", error);
+        throw error;
+      }
+    }
+  }, []);
+
+  // Pause audio
+  const pause = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return cleanup;
+  }, [cleanup]);
+
+  const contextValue: IAudioVisualizerContext = {
+    audioData,
+    setAudio,
+    play,
+    pause,
+  };
+
   return (
-    <AudioVisualizerContext.Provider value={{ audioData, setUserAudio }}>
+    <AudioVisualizerContext.Provider value={contextValue}>
       {children}
     </AudioVisualizerContext.Provider>
   );
 };
 
-const average = (arr: Uint8Array): number =>
-  arr.reduce((sum, val) => sum + val, 0) / arr.length;
+// Utility function
+const average = (arr: Uint8Array): number => {
+  if (arr.length === 0) return 0;
+  return arr.reduce((sum, val) => sum + val, 0) / arr.length;
+};

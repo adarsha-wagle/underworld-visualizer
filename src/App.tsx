@@ -23,24 +23,24 @@ export default function App() {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true);
 
   return (
-    <AppProvider>
-      <div style={{ height: "100vh", width: "100vw" }} className="bg-red-300">
-        <SectionVisualizerContainer />{" "}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent
-            aria-describedby="audio-selection"
-            className="p-0 [&>button]:hidden border-0 shadow-none ring-0 outline-none  max-w-2xl rounded-none"
-            onPointerDownOutside={(e) => e.preventDefault()}
-            onEscapeKeyDown={(e) => e.preventDefault()}
-          >
-            <DialogHeader className="hidden">
-              <DialogTitle>Audio Selection</DialogTitle>
-            </DialogHeader>
-            <SectionAudioSelection />
-          </DialogContent>
-        </Dialog>
-        <Stats />
-      </div>
-    </AppProvider>
+    // <AppProvider>
+    <div style={{ height: "100vh", width: "100vw" }} className="bg-red-900">
+      <SectionVisualizerContainer />
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent
+          aria-describedby="audio-selection"
+          className="p-0 [&>button]:hidden border-0 shadow-none ring-0 outline-none  max-w-2xl rounded-none bg-transparent"
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
+        >
+          <DialogHeader className="hidden">
+            <DialogTitle>Audio Selection</DialogTitle>
+          </DialogHeader>
+          <SectionAudioSelection />
+        </DialogContent>
+      </Dialog>
+      <Stats />
+    </div>
+    // </AppProvider>
   );
 }
