@@ -147,7 +147,7 @@ export default function AnglerFish({
   }, [anglerFishGltf]);
 
   // Animation and lighting frame loop
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     animationTime.current += delta;
     const time = animationTime.current;
 

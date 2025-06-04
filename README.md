@@ -55,4 +55,7 @@ export default tseslint.config({
 
 npx shadcn@latest add dialog
 
-1. Californication song
+<!-- todo -->
+
+1. Add ambient music
+2. add help buttonw

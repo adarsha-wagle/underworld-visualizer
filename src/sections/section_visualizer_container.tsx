@@ -1,5 +1,8 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stats, Text } from "@react-three/drei";
+import { Suspense } from "react";
+
+import Loader from "@/components/loader/loader";
 
 import AnglerFish from "../components/models/angler-fish";
 
@@ -14,20 +17,9 @@ import MarineParticles from "../components/particles/marine-particles";
 import SwimmingFish from "../components/particles/swimming-fish";
 // import Effects from "../components/effects/effects";
 
-function SectionVisualizerContainer() {
+function UnderWaterScene() {
   return (
-    <Canvas
-      camera={{ position: [0, 0, 5], fov: 50 }}
-      gl={{
-        antialias: true,
-        alpha: false,
-        powerPreference: "high-performance",
-      }}
-      onCreated={({ gl }) => {
-        gl.setClearColor("#001122");
-      }}
-    >
-      {/* <Effects /> */}
+    <>
       <UnderwaterAmbient />
       <UnderwaterCaustics />
       <Lights />
@@ -41,8 +33,36 @@ function SectionVisualizerContainer() {
       <AnglerFish />
       <SwimmingFish />
 
+      <Text
+        position={[0, 20, -30]}
+        fontSize={6}
+        color="#4A90E2"
+        anchorX="center"
+        anchorY="middle"
+      >
+        UNDERWATER WORLD
+      </Text>
       <MarineParticles />
+    </>
+  );
+}
 
+function SectionVisualizerContainer() {
+  return (
+    <Canvas
+      camera={{ position: [0, 0, 5], fov: 50 }}
+      gl={{
+        antialias: true,
+        alpha: false,
+        powerPreference: "high-performance",
+      }}
+      onCreated={({ gl }) => {
+        gl.setClearColor("#001122");
+      }}
+    >
+      <Suspense fallback={<Loader />}>
+        <UnderWaterScene />
+      </Suspense>
       <OrbitControls
         enablePan={true}
         enableZoom={true}
@@ -53,15 +73,7 @@ function SectionVisualizerContainer() {
         maxPolarAngle={Math.PI}
         target={[0, 0, 0]}
       />
-      <Text
-        position={[0, 20, -30]}
-        fontSize={6}
-        color="#4A90E2"
-        anchorX="center"
-        anchorY="middle"
-      >
-        UNDERWATER WORLD
-      </Text>
+
       <Stats />
     </Canvas>
   );

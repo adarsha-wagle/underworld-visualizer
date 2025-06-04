@@ -26,7 +26,7 @@ export default function App() {
     <AppProvider>
       <div className="h-screen w-screen relative">
         <SectionVisualizerContainer />
-        <PauseButton />
+        {!isDialogOpen && <PauseButton />}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent
             aria-describedby="audio-selection"
