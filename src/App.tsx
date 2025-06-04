@@ -12,9 +12,9 @@ import {
   DialogTitle,
 } from "./components/ui/dialog";
 
-import UnderwaterExploration from "./components/environment/terrain";
 import SectionVisualizerContainer from "./sections/section_visualizer_container";
 import SectionAudioSelection from "./sections/section_audio_selection";
+import PauseButton from "./sections/pause_button";
 
 // Audio analyzer hook
 
@@ -23,24 +23,25 @@ export default function App() {
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(true);
 
   return (
-    // <AppProvider>
-    <div style={{ height: "100vh", width: "100vw" }} className="bg-red-900">
-      <SectionVisualizerContainer />
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent
-          aria-describedby="audio-selection"
-          className="p-0 [&>button]:hidden border-0 shadow-none ring-0 outline-none  max-w-2xl rounded-none bg-transparent"
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(e) => e.preventDefault()}
-        >
-          <DialogHeader className="hidden">
-            <DialogTitle>Audio Selection</DialogTitle>
-          </DialogHeader>
-          <SectionAudioSelection />
-        </DialogContent>
-      </Dialog>
-      <Stats />
-    </div>
-    // </AppProvider>
+    <AppProvider>
+      <div className="h-screen w-screen relative">
+        <SectionVisualizerContainer />
+        <PauseButton />
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent
+            aria-describedby="audio-selection"
+            className="p-0 [&>button]:hidden border-0 shadow-none ring-0 outline-none  max-w-2xl rounded-none bg-transparent"
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+          >
+            <DialogHeader className="hidden">
+              <DialogTitle>Audio Selection</DialogTitle>
+            </DialogHeader>
+            <SectionAudioSelection closeDialog={() => setIsDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
+        <Stats />
+      </div>
+    </AppProvider>
   );
 }

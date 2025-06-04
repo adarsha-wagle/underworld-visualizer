@@ -23,13 +23,15 @@ interface IAudioVisualizerContext {
   setAudio: (file?: File) => Promise<void>;
   play: () => Promise<void>;
   pause: () => void;
+  isAudioUploading: boolean;
+  isPlaying: boolean;
 }
 
 const AudioVisualizerContext = createContext<IAudioVisualizerContext | null>(
   null
 );
 
-export const useAudioData = () => {
+export const useAudioAnalyzer = () => {
   const context = useContext(AudioVisualizerContext);
   if (!context)
     throw new Error("useAudioData must be used inside AudioVisualizerProvider");
@@ -54,6 +56,9 @@ export const AudioVisualizerProvider = ({
   defaultAudioPath?: string;
 }) => {
   const [audioData, setAudioData] = useState<IAudioData>(DEFAULT_AUDIO_DATA);
+  const [isAudioUploading, setIsAudioUploading] = useState<boolean>(false);
+
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   // Refs
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -88,6 +93,22 @@ export const AudioVisualizerProvider = ({
 
     analyserRef.current = null;
     frequencyDataRef.current = null;
+  }, []);
+
+  // Play audio
+  const play = useCallback(async () => {
+    if (audioRef.current) {
+      console.log("playing bs");
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Failed to play audio:", error);
+        throw error;
+      }
+    } else {
+      console.log("no audio ref");
+    }
   }, []);
 
   // Animation loop for audio analysis
@@ -128,7 +149,7 @@ export const AudioVisualizerProvider = ({
       try {
         // Cleanup previous audio
         cleanup();
-
+        setIsAudioUploading(true);
         // Create audio context
         audioContextRef.current = new (window.AudioContext ||
           (window as any).webkitAudioContext)();
@@ -148,7 +169,7 @@ export const AudioVisualizerProvider = ({
         const audio = new Audio();
         audio.crossOrigin = "anonymous";
         audio.loop = !file; // Loop default audio, not custom files
-        audio.volume = 0.7;
+        audio.volume = 1;
 
         // Set source
         if (file) {
@@ -188,6 +209,7 @@ export const AudioVisualizerProvider = ({
         const bufferLength = analyser.frequencyBinCount;
         frequencyDataRef.current = new Uint8Array(bufferLength);
 
+        setIsAudioUploading(false);
         // Start analysis loop
         updateAudioData();
       } catch (error) {
@@ -198,21 +220,10 @@ export const AudioVisualizerProvider = ({
     [cleanup, updateAudioData, defaultAudioPath]
   );
 
-  // Play audio
-  const play = useCallback(async () => {
-    if (audioRef.current) {
-      try {
-        await audioRef.current.play();
-      } catch (error) {
-        console.error("Failed to play audio:", error);
-        throw error;
-      }
-    }
-  }, []);
-
   // Pause audio
   const pause = useCallback(() => {
     if (audioRef.current) {
+      setIsPlaying(false);
       audioRef.current.pause();
     }
   }, []);
@@ -227,6 +238,8 @@ export const AudioVisualizerProvider = ({
     setAudio,
     play,
     pause,
+    isAudioUploading,
+    isPlaying,
   };
 
   return (

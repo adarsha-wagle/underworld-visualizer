@@ -1,13 +1,8 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { AudioVisualizerProvider } from "./audio-visualizer-provider";
-import Loader from "@/components/loader/loader";
 
 function AppProvider({ children }: { children: React.ReactNode }) {
-  return (
-    <Suspense fallback={<Loader />}>
-      <AudioVisualizerProvider>{children}</AudioVisualizerProvider>;
-    </Suspense>
-  );
+  return <AudioVisualizerProvider>{children}</AudioVisualizerProvider>;
 }
 
 export default AppProvider;

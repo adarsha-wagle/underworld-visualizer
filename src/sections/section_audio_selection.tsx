@@ -3,26 +3,37 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Upload, Play, Volume2, Music, Sparkles } from "lucide-react";
+import { useAudioAnalyzer } from "@/providers.tsx/audio-visualizer-provider";
 
-const SectionAudioSelection = () => {
+type TSectionAudioSelectionProps = {
+  closeDialog: () => void;
+};
+
+const SectionAudioSelection = ({
+  closeDialog,
+}: TSectionAudioSelectionProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [audioMode, setAudioMode] = useState<"default" | "custom" | null>(null);
+  const { setAudio, play, isAudioUploading } = useAudioAnalyzer();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
       setAudioMode("custom");
+      setAudio(file);
     }
   };
 
   const handleDefaultAudio = () => {
     setAudioMode("default");
     setSelectedFile(null);
+    setAudio();
   };
 
   const handleStart = () => {
-    console.log("Start");
+    play();
+    closeDialog();
   };
 
   return (
@@ -121,7 +132,7 @@ const SectionAudioSelection = () => {
                 <div className="relative">
                   <Input
                     type="file"
-                    accept="audio/*"
+                    accept="audio/mp3"
                     onChange={handleFileSelect}
                     className="hidden"
                     id="audio-upload"
@@ -159,9 +170,11 @@ const SectionAudioSelection = () => {
             className={
               "relative overflow-hidden group px-8 py-3 rounded-xl  transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-blue-500/25 "
             }
+            disabled={isAudioUploading}
           >
             <div className="relative flex items-center space-x-2">
               <Play className="w-5 h-5" />
+
               <p className="text-lg">Begin Descent</p>
             </div>
           </Button>
