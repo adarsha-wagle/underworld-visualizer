@@ -1,5 +1,5 @@
 import { useGLTF } from "@react-three/drei";
-import { useRef, useEffect, useState, type JSX } from "react";
+import { useRef, useEffect, type JSX } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
@@ -10,9 +10,11 @@ const MODEL_PATH = "/models/angler-fish.glb";
 type AnglerFishGLTF = GLTF & {
   nodes: {
     Bulb?: THREE.Mesh;
-    Fins?: THREE.Mesh;
+    LeftFin?: THREE.Mesh;
+    RightFin?: THREE.Mesh;
     Tail?: THREE.Mesh;
-    Eye?: THREE.Mesh;
+    LeftEye?: THREE.Mesh;
+    RightEye?: THREE.Mesh;
     [key: string]: any;
   };
   materials: {
@@ -76,20 +78,17 @@ export default function AnglerFish({
           color: 0x004466,
           emissive: new THREE.Color(0x00ffff),
           emissiveIntensity: 0,
-          roughness: 0.2,
-          metalness: 0.1,
+          roughness: 0.1,
+          metalness: 0.6,
         });
 
         (actualBulbMesh as THREE.Mesh).material = bulbMaterial;
-        console.log("Bulb material applied");
       } else {
-        console.log("Bulb mesh not found, searching in all children...");
         anglerFishGltf.scene.traverse((child) => {
           if (
             child.name.toLowerCase().includes("bulb") ||
             child.name.toLowerCase().includes("light")
           ) {
-            console.log("Found potential bulb:", child.name);
             if (child instanceof THREE.Mesh) {
               bulbMeshRef.current = child;
               const bulbMaterial = new THREE.MeshStandardMaterial({
@@ -252,188 +251,5 @@ export default function AnglerFish({
         <primitive object={anglerFishGltf.scene} />
       </group>
     </>
-  );
-}
-
-// Enhanced version with bloom effect and more advanced animations
-export function AnglerFishWithBloom({
-  audioData,
-}: AnglerFishProps): JSX.Element {
-  const anglerFishGltf = useGLTF(MODEL_PATH) as AnglerFishGLTF;
-  const groupRef = useRef<THREE.Group>(null);
-  const bulbMeshRef = useRef<THREE.Mesh | null>(null);
-  const finsMeshRef = useRef<THREE.Mesh | null>(null);
-  const tailMeshRef = useRef<THREE.Mesh | null>(null);
-  const eyeMeshRef = useRef<THREE.Mesh | null>(null);
-  const [isLightOn, setIsLightOn] = useState<boolean>(true);
-
-  const animationTime = useRef<number>(0);
-
-  useEffect(() => {
-    if (anglerFishGltf.scene) {
-      // Setup bulb with bloom-ready material
-      const setupBulb = (mesh: THREE.Mesh) => {
-        const emissiveMaterial = new THREE.MeshStandardMaterial({
-          color: 0x001122,
-          emissive: new THREE.Color(0x00ffff),
-          emissiveIntensity: 0,
-          roughness: 0.1,
-          metalness: 0.2,
-          transparent: true,
-          opacity: 0.9,
-        });
-
-        mesh.material = emissiveMaterial;
-        // Mark for bloom post-processing
-        mesh.userData.bloom = true;
-        bulbMeshRef.current = mesh;
-      };
-
-      const bulbMesh = anglerFishGltf.scene.getObjectByName(
-        "Bulb"
-      ) as THREE.Mesh;
-      if (bulbMesh?.isMesh) {
-        setupBulb(bulbMesh);
-      } else {
-        anglerFishGltf.scene.traverse((child) => {
-          if (
-            child.name.toLowerCase().includes("bulb") &&
-            child instanceof THREE.Mesh
-          ) {
-            setupBulb(child);
-          }
-        });
-      }
-
-      // Setup other meshes
-      const findAndSetMesh = (
-        name: string,
-        ref: React.RefObject<THREE.Mesh | null>
-      ) => {
-        let mesh = anglerFishGltf.scene.getObjectByName(name) as THREE.Mesh;
-        if (!mesh?.isMesh) {
-          anglerFishGltf.scene.traverse((child) => {
-            if (
-              child.name.toLowerCase().includes(name.toLowerCase()) &&
-              child instanceof THREE.Mesh
-            ) {
-              mesh = child;
-            }
-          });
-        }
-        ref.current = mesh || null;
-      };
-
-      findAndSetMesh("Fins", finsMeshRef);
-      findAndSetMesh("Tail", tailMeshRef);
-      findAndSetMesh("Eye", eyeMeshRef);
-    }
-  }, [anglerFishGltf]);
-
-  useFrame((state, delta) => {
-    animationTime.current += delta;
-    const time = animationTime.current;
-
-    // Enhanced bulb animation with bloom
-    if (bulbMeshRef.current?.material && isLightOn) {
-      const material = bulbMeshRef.current
-        .material as THREE.MeshStandardMaterial;
-
-      let glowIntensity = 1.0;
-      if (audioData) {
-        glowIntensity = 1.0 + audioData.treble * 2.0 + audioData.bass * 0.5;
-      } else {
-        glowIntensity = 1.0 + Math.sin(time * 2) * 0.8; // More intense default
-      }
-
-      material.emissiveIntensity = Math.max(0.5, Math.min(3, glowIntensity));
-    } else if (bulbMeshRef.current?.material && !isLightOn) {
-      const material = bulbMeshRef.current
-        .material as THREE.MeshStandardMaterial;
-      material.emissiveIntensity = 0;
-    }
-
-    // Enhanced animations for body parts
-    if (finsMeshRef.current) {
-      const intensity = audioData ? audioData.mid * 0.8 : 0.5;
-      finsMeshRef.current.rotation.z =
-        Math.sin(time * 3) * (0.15 + intensity * 0.25);
-      finsMeshRef.current.rotation.x =
-        Math.cos(time * 2.3) * (0.08 + intensity * 0.12);
-    }
-
-    if (tailMeshRef.current) {
-      const intensity = audioData ? audioData.bass * 1.2 : 0.6;
-      tailMeshRef.current.rotation.y =
-        Math.sin(time * 3.5) * (0.2 + intensity * 0.4);
-      tailMeshRef.current.rotation.z =
-        Math.cos(time * 2.8) * (0.1 + intensity * 0.2);
-    }
-
-    if (eyeMeshRef.current) {
-      const intensity = audioData ? audioData.overall * 0.4 : 0.3;
-      eyeMeshRef.current.rotation.x =
-        Math.sin(time * 1.5) * (0.06 + intensity * 0.12);
-      eyeMeshRef.current.rotation.y =
-        Math.cos(time * 1.1) * (0.04 + intensity * 0.1);
-
-      // Enhanced blinking
-      const blinkCycle = Math.sin(time * 0.6);
-      if (blinkCycle > 0.93) {
-        const blinkAmount = (blinkCycle - 0.93) / 0.07;
-        eyeMeshRef.current.scale.y = 1 - blinkAmount * 0.9;
-      } else {
-        eyeMeshRef.current.scale.y = 1;
-      }
-    }
-
-    // Enhanced whole body movement
-    if (groupRef.current) {
-      const intensity = audioData ? audioData.overall * 0.3 : 0.2;
-      groupRef.current.rotation.y +=
-        Math.sin(time * 1.2) * 0.002 * (1 + intensity);
-      groupRef.current.position.y = Math.sin(time) * (0.03 + intensity * 0.08);
-      groupRef.current.position.x =
-        Math.cos(time * 0.7) * (0.01 + intensity * 0.03);
-    }
-  });
-
-  console.log("bulbe mesh", bulbMeshRef.current);
-
-  return (
-    <group ref={groupRef} onClick={() => setIsLightOn(!isLightOn)}>
-      {/* Enhanced lighting setup */}
-      {isLightOn && bulbMeshRef.current && (
-        <>
-          <pointLight
-            position={[
-              bulbMeshRef.current.position.x,
-              bulbMeshRef.current.position.y,
-              bulbMeshRef.current.position.z + 0.2,
-            ]}
-            color={0x00ffff}
-            intensity={0.8}
-            distance={3}
-            decay={1.5}
-          />
-          <spotLight
-            position={[
-              bulbMeshRef.current.position.x,
-              bulbMeshRef.current.position.y + 0.1,
-              bulbMeshRef.current.position.z + 0.3,
-            ]}
-            target={groupRef.current || undefined}
-            color={0x004466}
-            intensity={0.3}
-            angle={Math.PI / 6}
-            penumbra={0.5}
-            distance={4}
-            decay={2}
-          />
-        </>
-      )}
-
-      <primitive object={anglerFishGltf.scene} />
-    </group>
   );
 }

@@ -11,7 +11,8 @@ import Corals from "../components/corals/corals";
 import KelpForest from "../components/kelp-forest/kelp-forest";
 import Bubbles from "../components/bubbles/bubbles";
 import MarineParticles from "../components/particles/marine-particles";
-import Effects from "../components/effects/effects";
+import SwimmingFish from "../components/particles/swimming-fish";
+// import Effects from "../components/effects/effects";
 
 function SectionVisualizerContainer() {
   return (
@@ -26,7 +27,7 @@ function SectionVisualizerContainer() {
         gl.setClearColor("#001122");
       }}
     >
-      <Effects />
+      {/* <Effects /> */}
       <UnderwaterAmbient />
       <UnderwaterCaustics />
       <Lights />
@@ -38,6 +39,7 @@ function SectionVisualizerContainer() {
 
       <Bubbles />
       <AnglerFish />
+      <SwimmingFish />
 
       <MarineParticles />
 
