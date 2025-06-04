@@ -1,10 +1,17 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, Stats, Text } from "@react-three/drei";
 
 import AnglerFish from "../components/models/angler-fish";
-// import Player from "../components/player/player";
-// import Terrain, { UnderworldScene } from "../components/environment/terrain";
-import CustomSky from "../components/environment/sky";
+
+import UnderwaterAmbient from "../components/environment/underwater-ambient";
+import Lights from "../components/environment/lights";
+import Seafloor from "../components/environment/seafloor";
+import UnderwaterCaustics from "../components/environment/underwater-caustics";
+import Corals from "../components/corals/corals";
+import KelpForest from "../components/kelp-forest/kelp-forest";
+import Bubbles from "../components/bubbles/bubbles";
+import MarineParticles from "../components/particles/marine-particles";
+import Effects from "../components/effects/effects";
 
 function SectionVisualizerContainer() {
   return (
@@ -15,17 +22,25 @@ function SectionVisualizerContainer() {
         alpha: false,
         powerPreference: "high-performance",
       }}
+      onCreated={({ gl }) => {
+        gl.setClearColor("#001122");
+      }}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight
-        castShadow
-        intensity={1.2}
-        position={[10, 20, 10]}
-        color="#ffe0b2" // Warm sunlight color
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-      />
+      <Effects />
+      <UnderwaterAmbient />
+      <UnderwaterCaustics />
+      <Lights />
+      <Seafloor />
+
+      <Corals />
+
+      <KelpForest />
+
+      <Bubbles />
       <AnglerFish />
+
+      <MarineParticles />
+
       <OrbitControls
         enablePan={true}
         enableZoom={true}
@@ -36,11 +51,16 @@ function SectionVisualizerContainer() {
         maxPolarAngle={Math.PI}
         target={[0, 0, 0]}
       />
-      <CustomSky />
+      <Text
+        position={[0, 20, -30]}
+        fontSize={6}
+        color="#4A90E2"
+        anchorX="center"
+        anchorY="middle"
+      >
+        UNDERWATER WORLD
+      </Text>
       <Stats />
-      {/* <OceanEnvironment /> */}
-      {/* <Terrain /> */}
-      {/* <Player /> */}
     </Canvas>
   );
 }

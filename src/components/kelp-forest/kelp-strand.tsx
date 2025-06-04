@@ -7,7 +7,7 @@ interface KelpStrandProps {
   height?: number;
 }
 
-function KelpStrand({ position, height = 15 }: KelpStrandProps) {
+export function KelpStrand({ position, height = 15 }: KelpStrandProps) {
   const meshRef = useRef<THREE.Mesh>(null!);
 
   useFrame((state) => {

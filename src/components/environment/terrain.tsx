@@ -2,6 +2,7 @@ import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
 import * as THREE from "three";
+import Effects from "../effects/effects";
 
 // Type definitions
 interface CoralFormationProps {
@@ -48,7 +49,7 @@ function UnderwaterAmbient() {
 
   return (
     <>
-      <ambientLight ref={ambientRef} intensity={0.4} color="#006699" />
+      <ambientLight ref={ambientRef} intensity={0.4} color="#ffffff" />
       <fog attach="fog" args={["#003355", 20, 120]} />
     </>
   );
@@ -478,6 +479,7 @@ function BubbleStream({ position, count = 50 }: BubbleStreamProps) {
 function UnderwaterScene() {
   return (
     <>
+      <Effects />
       <UnderwaterAmbient />
 
       {/* Underwater lighting setup */}
