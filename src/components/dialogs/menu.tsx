@@ -5,13 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Upload, Play, Volume2, Music, Sparkles } from "lucide-react";
 import { useAudioAnalyzer } from "@/providers.tsx/audio-visualizer-provider";
 
-type TSectionAudioSelectionProps = {
+type TMenuProps = {
   closeDialog: () => void;
 };
 
-const SectionAudioSelection = ({
-  closeDialog,
-}: TSectionAudioSelectionProps) => {
+const Menu = ({ closeDialog }: TMenuProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [audioMode, setAudioMode] = useState<"default" | "custom" | null>(null);
   const { setAudio, play, isAudioUploading } = useAudioAnalyzer();
@@ -37,7 +35,7 @@ const SectionAudioSelection = ({
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative max-w-2xl">
       {/* Mystical background effects */}
 
       <Card className="relative bg-transparent  w-full border-none ">
@@ -59,7 +57,7 @@ const SectionAudioSelection = ({
         <div className="space-y-4 px-10">
           {/* Default Audio Option */}
           <div
-            className={`relative group cursor-pointer transition-all duration-300 p-4 ${
+            className={`relative group cursor-pointer transition-all duration-300 ${
               audioMode === "default" ? "scale-105" : "hover:scale-102"
             }`}
             onClick={handleDefaultAudio}
@@ -194,4 +192,4 @@ const SectionAudioSelection = ({
   );
 };
 
-export default SectionAudioSelection;
+export default Menu;

@@ -59,3 +59,4 @@ npx shadcn@latest add dialog
 
 1. Add ambient music
 2. add help buttonw
+3. Vectors
