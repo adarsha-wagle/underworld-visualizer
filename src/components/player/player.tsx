@@ -24,18 +24,23 @@ function Player() {
 
   useFrame((_, delta) => {
     const direction = new THREE.Vector3();
+
+    // Create movement vectors in local space
     const frontVector = new THREE.Vector3(
       0,
       0,
       Number(backward) - Number(forward)
     );
-    const sideVector = new THREE.Vector3(Number(left) - Number(right), 0, 0);
+    const sideVector = new THREE.Vector3(Number(right) - Number(left), 0, 0);
 
-    direction
-      .addVectors(frontVector, sideVector)
-      .normalize()
-      .applyAxisAngle(new THREE.Vector3(0, 1, 0), camera.rotation.y)
-      .multiplyScalar(PLAYER_SPEED);
+    // Combine the movement vectors
+    direction.addVectors(frontVector, sideVector).normalize();
+
+    // Transform the direction based on camera's full rotation (not just Y-axis)
+    direction.applyQuaternion(camera.quaternion);
+
+    // Scale by speed
+    direction.multiplyScalar(PLAYER_SPEED);
 
     // Smooth velocity change (lerp current velocity toward target direction)
     velocity.current.lerp(direction, SMOOTHING);

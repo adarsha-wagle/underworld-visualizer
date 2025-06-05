@@ -15,11 +15,13 @@ import KelpForest from "../components/kelp-forest/kelp-forest";
 import Bubbles from "../components/bubbles/bubbles";
 import MarineParticles from "../components/particles/marine-particles";
 import SwimmingFish from "../components/particles/swimming-fish";
-// import Effects from "../components/effects/effects";
+import Player from "@/components/player/player";
+// import Effects from "@/components/effects/effects";
 
 function UnderWaterScene() {
   return (
     <>
+      {/* <Effects /> */}
       <UnderwaterAmbient />
       <UnderwaterCaustics />
       <Lights />
@@ -63,7 +65,8 @@ function SectionVisualizerContainer() {
       <Suspense fallback={<Loader />}>
         <UnderWaterScene />
       </Suspense>
-      <OrbitControls
+      <Player />
+      {/* <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
@@ -72,7 +75,7 @@ function SectionVisualizerContainer() {
         minPolarAngle={0}
         maxPolarAngle={Math.PI}
         target={[0, 0, 0]}
-      />
+      /> */}
 
       <Stats />
     </Canvas>
