@@ -80,7 +80,7 @@ const Menu = ({ closeDialog }: TMenuProps) => {
                   <Music className="w-5 h-5 text-cyan-300" />
                 </div>
                 <div className="flex-1">
-                  <h3 className=" text-cyan-100 text-lg">Default Ambience</h3>
+                  <h3 className=" text-cyan-100 text-xl">Default Ambience</h3>
                   <p className="text-sm text-blue-100/90">
                     Ethereal depths soundscape
                   </p>
@@ -117,7 +117,7 @@ const Menu = ({ closeDialog }: TMenuProps) => {
                     <Upload className="w-5 h-5 text-purple-300" />
                   </div>
                   <div className="flex-1">
-                    <h3 className=" text-cyan-100 text-lg"> Custom Audio</h3>
+                    <h3 className=" text-cyan-100 text-xl"> Custom Audio</h3>
                     <p className="text-sm text-blue-100/90">
                       Upload your own soundscape
                     </p>
@@ -168,7 +168,7 @@ const Menu = ({ closeDialog }: TMenuProps) => {
             className={
               "relative overflow-hidden group px-8 py-3 rounded-xl  transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-blue-500/25 "
             }
-            disabled={isAudioUploading}
+            disabled={isAudioUploading || !audioMode}
           >
             <div className="relative flex items-center space-x-2">
               <Play className="w-5 h-5" />

@@ -16,12 +16,12 @@ import Bubbles from "../components/bubbles/bubbles";
 import MarineParticles from "../components/particles/marine-particles";
 import SwimmingFish from "../components/particles/swimming-fish";
 import Player from "@/components/player/player";
-// import Effects from "@/components/effects/effects";
+import Effects from "@/components/effects/effects";
 
 function UnderWaterScene() {
   return (
     <>
-      {/* <Effects /> */}
+      <Effects />
       <UnderwaterAmbient />
       <UnderwaterCaustics />
       <Lights />

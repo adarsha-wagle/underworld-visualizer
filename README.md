@@ -60,3 +60,9 @@ npx shadcn@latest add dialog
 1. Add ambient music
 2. add help buttonw
 3. Vectors
+4. Add Settings instead of simple btn
+5. locking player from going too far
+
+<!-- TO FIX -->
+
+1. Cursor gets locked initially

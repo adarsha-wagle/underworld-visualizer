@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import PauseButton from "./pause_button";
-import Help from "./help";
 import Menu from "./menu";
-import HelpButton from "./help_button";
-import { CircleHelp, X } from "lucide-react";
+import { Settings, X } from "lucide-react";
 import { Button } from "../ui/button";
+import SettingsContainer from "../settings/settings-container";
 
 function DialogContainer() {
   const [isMenuDialogOpen, setIsMenuDialogOpen] = useState<boolean>(true);
@@ -31,7 +30,7 @@ function DialogContainer() {
         >
           <div className="absolute top-4 right-2 z-50">
             <Button onClick={openHelpDialog}>
-              <CircleHelp className="size-10 text-white" />
+              <Settings className="size-10 text-white" />
             </Button>
           </div>
           <DialogHeader className="hidden">
@@ -53,7 +52,7 @@ function DialogContainer() {
           <DialogHeader className="hidden">
             <DialogTitle>Help </DialogTitle>
           </DialogHeader>
-          <Help />
+          <SettingsContainer />
         </DialogContent>
       </Dialog>
     </>

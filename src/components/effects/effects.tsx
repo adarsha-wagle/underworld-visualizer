@@ -17,10 +17,10 @@ function Effects() {
       />
       <Vignette eskil={false} offset={0.1} darkness={0.8} />
       <Noise opacity={0.04} />
-      <ChromaticAberration
+      {/* <ChromaticAberration
         offset={[0.001, 0.001]}
         blendFunction={BlendFunction.NORMAL}
-      />
+      /> */}
     </EffectComposer>
   );
 }

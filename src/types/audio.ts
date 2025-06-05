@@ -3,4 +3,6 @@ export interface IAudioData {
   mid: number;
   treble: number;
   overall: number;
+  volume: number;
+  frequencyData: Uint8Array;
 }
