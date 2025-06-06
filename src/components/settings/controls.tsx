@@ -1,4 +1,4 @@
-import { Gamepad2, Volume2 } from "lucide-react";
+import { Gamepad2 } from "lucide-react";
 
 const options = [
   {

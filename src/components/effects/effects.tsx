@@ -4,9 +4,9 @@ import {
   Bloom,
   Vignette,
   Noise,
-  ChromaticAberration,
+  // ChromaticAberration,
 } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
+// import { BlendFunction } from "postprocessing";
 import type { JSX } from "react";
 
 function Effects() {
@@ -14,7 +14,7 @@ function Effects() {
     isBloomEnabled,
     isNoiseEnabled,
     isVignetteEnabled,
-    chromaticAberration,
+    // chromaticAberration,
   } = useSettingsContext();
 
   const effects = [
