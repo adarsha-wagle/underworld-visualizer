@@ -1,7 +1,55 @@
 import { Monitor, Eye, Sparkles, Save } from "lucide-react";
 import { Button } from "../ui/button";
+import { useState } from "react";
+import { useSettingsContext } from "@/providers.tsx/settings-provider";
+
+const sliderMinValue = 0.001;
+const sliderMaxValue = 0.005;
 
 function Display() {
+  const {
+    dispatch,
+    isNoiseEnabled: isNoise,
+    isBloomEnabled: isBloom,
+    isVignetteEnabled: isVignette,
+    chromaticAberration: cValue,
+  } = useSettingsContext();
+  const [isNoiseEnabled, setIsNoiseEnabled] = useState<boolean>(isNoise);
+  const [isVignetteEnabled, setIsVignetteEnabled] =
+    useState<boolean>(isVignette);
+  const [isBloomEnabled, setIsBloomEnabled] = useState<boolean>(isBloom);
+  const [sliderValue, setSliderValue] = useState<number>(cValue);
+
+  const handleNoiseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsNoiseEnabled(e.target.checked);
+  };
+
+  const handleVignetteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsVignetteEnabled(e.target.checked);
+  };
+
+  const handleGlowEffectChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsBloomEnabled(e.target.checked);
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = parseFloat(e.target.value);
+    const invertedValue = sliderMaxValue - (rawValue - sliderMinValue);
+    setSliderValue(invertedValue);
+  };
+
+  const handleSave = () => {
+    dispatch({
+      type: "SET_DISPLAY_SETTINGS",
+      payload: {
+        isNoiseEnabled: isNoiseEnabled,
+        isVignetteEnabled: isVignetteEnabled,
+        isBloomEnabled: isBloomEnabled,
+        chromaticAberration: sliderValue,
+      },
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -26,10 +74,11 @@ function Display() {
           <div className="space-y-2">
             <input
               type="range"
-              min="0.001"
-              max="0.005"
+              min={sliderMinValue}
+              max={sliderMaxValue}
               defaultValue="0.002"
               step="0.0001"
+              onChange={handleSliderChange}
               className="w-full h-2 bg-slate-600 rounded-lg appearance-none slider"
             />
             <div className="flex justify-between text-sm text-blue-200/80">
@@ -53,24 +102,28 @@ function Display() {
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"
-                defaultChecked
+                checked={isNoiseEnabled}
                 className="rounded bg-slate-600 border-slate-500"
+                onChange={handleNoiseChange}
               />
               <span className="text-blue-100 text-lg">
-                Enable particle effects
+                Enable Noise effects
               </span>
             </label>
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"
-                defaultChecked
+                checked={isVignetteEnabled}
                 className="rounded bg-slate-600 border-slate-500"
+                onChange={handleVignetteChange}
               />
               <span className="text-blue-100 text-lg">Enable dark corners</span>
             </label>
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
                 type="checkbox"
+                checked={isBloomEnabled}
+                onChange={handleGlowEffectChange}
                 className="rounded bg-slate-600 border-slate-500"
               />
               <span className="text-blue-100 text-lg">Enable Glow Effect</span>
@@ -82,10 +135,7 @@ function Display() {
       <div className="p-6 flex justify-end">
         <Button
           className=" bg-gradient-to-r from-cyan-800 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25 text-lg"
-          onClick={() => {
-            // Handle save logic here
-            console.log("Settings saved!");
-          }}
+          onClick={handleSave}
         >
           <Save className="w-5 h-5 mr-2" />
           Save Changes

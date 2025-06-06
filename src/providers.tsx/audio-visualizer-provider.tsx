@@ -14,8 +14,10 @@ interface IAudioVisualizerContext {
   setAudio: (file?: File) => Promise<void>;
   play: () => Promise<void>;
   pause: () => void;
+  setVolume: (volume: number) => void;
   isAudioUploading: boolean;
   isPlaying: boolean;
+  volume: number;
 }
 
 const AudioVisualizerContext = createContext<IAudioVisualizerContext | null>(
@@ -35,7 +37,7 @@ const DEFAULT_AUDIO_DATA: IAudioData = {
   mid: 0,
   treble: 0,
   overall: 0,
-  volume: 0,
+  volume: 0.8,
   frequencyData: new Uint8Array(0),
 };
 
@@ -48,8 +50,8 @@ export const AudioVisualizerProvider = ({
 }) => {
   const [audioData, setAudioData] = useState<IAudioData>(DEFAULT_AUDIO_DATA);
   const [isAudioUploading, setIsAudioUploading] = useState<boolean>(false);
-
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [volume, setVolumeState] = useState<number>(1); // Volume state (0-1)
 
   // Refs
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -58,6 +60,18 @@ export const AudioVisualizerProvider = ({
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const frequencyDataRef = useRef<Uint8Array | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+
+  // Set volume function
+  const setVolume = useCallback((newVolume: number) => {
+    // Clamp volume between 0 and 1
+    const clampedVolume = Math.max(0, Math.min(1, newVolume));
+    setVolumeState(clampedVolume);
+
+    // Apply volume to audio element if it exists
+    if (audioRef.current) {
+      audioRef.current.volume = clampedVolume;
+    }
+  }, []);
 
   // Cleanup function
   const cleanup = useCallback(() => {
@@ -89,7 +103,6 @@ export const AudioVisualizerProvider = ({
   // Play audio
   const play = useCallback(async () => {
     if (audioRef.current) {
-      console.log("playing bs");
       try {
         await audioRef.current.play();
         setIsPlaying(true);
@@ -120,14 +133,14 @@ export const AudioVisualizerProvider = ({
     const mid = average(frequencyDataRef.current.slice(bassEnd, midEnd)) / 255;
     const treble = average(frequencyDataRef.current.slice(midEnd)) / 255;
     const overall = average(frequencyDataRef.current) / 255;
-    const volume = overall; // Simple volume approximation
+    const volumeLevel = overall; // Simple volume approximation
 
     setAudioData({
       bass,
       mid,
       treble,
       overall,
-      volume,
+      volume: volumeLevel,
       frequencyData: new Uint8Array(frequencyDataRef.current),
     });
 
@@ -160,7 +173,7 @@ export const AudioVisualizerProvider = ({
         const audio = new Audio();
         audio.crossOrigin = "anonymous";
         audio.loop = !file; // Loop default audio, not custom files
-        audio.volume = 1;
+        audio.volume = volume; // Apply current volume setting
 
         // Set source
         if (file) {
@@ -208,7 +221,7 @@ export const AudioVisualizerProvider = ({
         throw error;
       }
     },
-    [cleanup, updateAudioData, defaultAudioPath]
+    [cleanup, updateAudioData, defaultAudioPath, volume]
   );
 
   // Pause audio
@@ -229,8 +242,10 @@ export const AudioVisualizerProvider = ({
     setAudio,
     play,
     pause,
+    setVolume,
     isAudioUploading,
     isPlaying,
+    volume,
   };
 
   return (

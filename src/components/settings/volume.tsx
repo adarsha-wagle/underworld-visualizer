@@ -1,6 +1,17 @@
+import { useAudioAnalyzer } from "@/providers.tsx/audio-visualizer-provider";
 import { Volume2 } from "lucide-react";
+import { useState } from "react";
 
 function Volume() {
+  const { volume, setVolume } = useAudioAnalyzer();
+  const [volumeLevel, setVolumeLevel] = useState<number>(volume * 100);
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolumeLevel = Number(e.target.value);
+    setVolumeLevel(newVolumeLevel);
+    setVolume(newVolumeLevel / 100);
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -24,11 +35,12 @@ function Volume() {
         </div>
         <div className="space-y-2">
           <input
+            value={volumeLevel}
+            onChange={handleVolumeChange}
             type="range"
             min="1"
             max="100"
-            defaultValue="0.002"
-            step="0.0001"
+            step="4"
             className="w-full h-2 bg-slate-600 rounded-lg appearance-none slider"
           />
           <div className="flex justify-between text-sm text-blue-200/80">
