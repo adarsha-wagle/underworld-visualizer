@@ -232,6 +232,8 @@ export default function AnglerFish({
 
   return (
     <>
+      <ambientLight intensity={0.35} />
+
       <group ref={groupRef}>
         {/* Add a subtle point light when bulb is on for environmental lighting */}
         {isLightOn && bulbMeshRef.current && (
