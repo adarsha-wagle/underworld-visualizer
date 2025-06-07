@@ -19,6 +19,10 @@ import SwimmingFish from "../components/particles/swimming-fish";
 import Effects from "@/components/effects/effects";
 import SeaHorse from "@/components/models/seahorse";
 import GoldFish from "@/components/models/gold-fish";
+import SeaCoral from "@/components/models/sea-coral";
+import Coral from "@/components/models/coral";
+import RedCoral from "@/components/models/red-coral";
+import AnemoneCoral from "@/components/models/anemone-coral";
 
 function UnderWaterScene() {
   return (
@@ -34,7 +38,11 @@ function UnderWaterScene() {
       <AnglerFish />
       <SeaHorse />
       <GoldFish />
+      <AnemoneCoral />
+      {/* <SeaCoral /> */}
+      <RedCoral />
       <SwimmingFish />
+      <Coral />
       <Text
         position={[-100, 5, 100]} // near left edge
         fontSize={6}
