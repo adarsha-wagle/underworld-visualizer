@@ -18,6 +18,7 @@ import SwimmingFish from "../components/particles/swimming-fish";
 // import Player from "@/components/player/player";
 import Effects from "@/components/effects/effects";
 import SeaHorse from "@/components/models/seahorse";
+import GoldFish from "@/components/models/gold-fish";
 
 function UnderWaterScene() {
   return (
@@ -32,6 +33,7 @@ function UnderWaterScene() {
       <Bubbles />
       <AnglerFish />
       <SeaHorse />
+      <GoldFish />
       <SwimmingFish />
       <Text
         position={[-100, 5, 100]} // near left edge
