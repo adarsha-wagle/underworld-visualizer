@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { Stats, Text } from "@react-three/drei";
+import { OrbitControls, Stats, Text } from "@react-three/drei";
 import { Suspense } from "react";
 
 import Loader from "@/components/loader/loader";
@@ -26,17 +26,22 @@ function UnderWaterScene() {
       <UnderwaterCaustics />
       <Lights />
       <Seafloor />
-
       <Corals />
-
       <KelpForest />
-
       <Bubbles />
       <AnglerFish />
       <SwimmingFish />
-
       <Text
-        position={[0, 20, -30]}
+        position={[-100, 5, 100]} // near left edge
+        fontSize={6}
+        color="#4A90E2"
+        anchorX="center"
+        anchorY="middle"
+      >
+        UNDERWATER WORLD
+      </Text>{" "}
+      <Text
+        position={[-100, 5, -100]} // near left edge
         fontSize={6}
         color="#4A90E2"
         anchorX="center"
@@ -71,7 +76,7 @@ function SectionVisualizerContainer() {
         enableZoom={true}
         enableRotate={true}
         minDistance={2}
-        maxDistance={15}
+        maxDistance={400}
         minPolarAngle={0}
         maxPolarAngle={Math.PI}
         target={[0, 0, 0]}

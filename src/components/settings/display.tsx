@@ -18,7 +18,9 @@ function Display() {
   const [isVignetteEnabled, setIsVignetteEnabled] =
     useState<boolean>(isVignette);
   const [isBloomEnabled, setIsBloomEnabled] = useState<boolean>(isBloom);
-  const [sliderValue, setSliderValue] = useState<number>(cValue);
+  const [sliderValue, setSliderValue] = useState<number>(
+    sliderMaxValue - (cValue - sliderMinValue)
+  );
 
   const handleNoiseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsNoiseEnabled(e.target.checked);
@@ -34,18 +36,18 @@ function Display() {
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = parseFloat(e.target.value);
-    const invertedValue = sliderMaxValue - (rawValue - sliderMinValue);
-    setSliderValue(invertedValue);
+    setSliderValue(rawValue);
   };
 
   const handleSave = () => {
+    const chromValue = sliderMaxValue - (sliderValue - sliderMinValue);
     dispatch({
       type: "SET_DISPLAY_SETTINGS",
       payload: {
         isNoiseEnabled: isNoiseEnabled,
         isVignetteEnabled: isVignetteEnabled,
         isBloomEnabled: isBloomEnabled,
-        chromaticAberration: sliderValue,
+        chromaticAberration: chromValue,
       },
     });
   };
@@ -76,8 +78,8 @@ function Display() {
               type="range"
               min={sliderMinValue}
               max={sliderMaxValue}
-              defaultValue="0.002"
-              step="0.0001"
+              value={sliderValue}
+              step="0.001"
               onChange={handleSliderChange}
               className="w-full h-2 bg-slate-600 rounded-lg appearance-none slider"
             />
@@ -117,7 +119,7 @@ function Display() {
                 className="rounded bg-slate-600 border-slate-500"
                 onChange={handleVignetteChange}
               />
-              <span className="text-blue-100 text-lg">Enable dark corners</span>
+              <span className="text-blue-100 text-lg">Enable Dark Corners</span>
             </label>
             <label className="flex items-center space-x-3 cursor-pointer">
               <input

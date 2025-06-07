@@ -1,12 +1,21 @@
 // useKeyboardControls.ts
 import { useEffect, useState } from "react";
 
+type TKeys = {
+  forward: boolean;
+  backward: boolean;
+  left: boolean;
+  right: boolean;
+  shift: boolean;
+};
+
 export const useKeyboardControls = () => {
-  const [keys, setKeys] = useState({
+  const [keys, setKeys] = useState<TKeys>({
     forward: false,
     backward: false,
     left: false,
     right: false,
+    shift: false,
   });
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -22,6 +31,9 @@ export const useKeyboardControls = () => {
         break;
       case "KeyD":
         setKeys((k) => ({ ...k, right: true }));
+        break;
+      case "ShiftLeft":
+        setKeys((k) => ({ ...k, shift: true }));
         break;
     }
   };
@@ -39,6 +51,9 @@ export const useKeyboardControls = () => {
         break;
       case "KeyD":
         setKeys((k) => ({ ...k, right: false }));
+        break;
+      case "ShiftLeft":
+        setKeys((k) => ({ ...k, shift: false }));
         break;
     }
   };

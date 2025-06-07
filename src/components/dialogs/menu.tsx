@@ -30,6 +30,7 @@ const Menu = ({ closeDialog }: TMenuProps) => {
   };
 
   const handleStart = () => {
+    // document.body.requestFullscreen();
     play();
     closeDialog();
   };
