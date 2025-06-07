@@ -23,6 +23,7 @@ import SeaCoral from "@/components/models/sea-coral";
 import Coral from "@/components/models/coral";
 import RedCoral from "@/components/models/red-coral";
 import AnemoneCoral from "@/components/models/anemone-coral";
+import Lobster from "@/components/models/lobster";
 
 function UnderWaterScene() {
   return (
@@ -40,6 +41,7 @@ function UnderWaterScene() {
       <GoldFish />
       <AnemoneCoral />
       {/* <SeaCoral /> */}
+      <Lobster />
       <RedCoral />
       <SwimmingFish />
       <Coral />
