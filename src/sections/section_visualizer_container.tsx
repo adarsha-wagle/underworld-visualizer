@@ -6,18 +6,9 @@ import Loader from "@/components/loader/loader";
 
 import AnglerFish from "../components/models/angler-fish";
 
-import Lights from "../components/environment/lights";
-import Seafloor from "../components/environment/seafloor";
-import Corals from "../components/corals/corals";
-import KelpForest from "../components/kelp-forest/kelp-forest";
-import Bubbles from "../components/bubbles/bubbles";
 import SeaHorse from "@/components/models/seahorse";
 import GoldFish from "@/components/models/gold-fish";
-import Coral from "@/components/models/coral";
-import RedCoral from "@/components/models/red-coral";
-import AnemoneCoral from "@/components/models/anemone-coral";
 import Lobster from "@/components/models/lobster";
-import Whale from "@/components/models/whale";
 import Shark from "@/components/models/shark";
 import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
@@ -33,12 +24,8 @@ function UnderWaterScene() {
       <AnglerFish />
       <SeaHorse />
       <GoldFish />
-      <AnemoneCoral />
       <Shark />
       <Lobster />
-      <Whale />
-      <RedCoral />
-      <Coral />
       <Text
         position={[-100, 5, 100]}
         fontSize={6}

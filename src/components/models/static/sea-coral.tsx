@@ -1,4 +1,4 @@
-import { useGLTF } from "@react-three/drei";
+import { Clone, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
@@ -20,7 +20,11 @@ type TSeaCoralGLTF = GLTF & {
 
 useGLTF.preload(MODEL_PATH);
 
-function SeaCoral() {
+type TSeaCoralProps = {
+  position: [number, number, number];
+};
+
+function SeaCoral({ position }: TSeaCoralProps) {
   const groupRef = useRef<THREE.Group>(null);
   const seaCoralGltf = useGLTF(MODEL_PATH) as TSeaCoralGLTF;
 
@@ -50,8 +54,8 @@ function SeaCoral() {
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 20]}>
-      <primitive object={seaCoralGltf.scene} />
+    <group ref={groupRef} position={position}>
+      <Clone object={seaCoralGltf.scene} />
     </group>
   );
 }

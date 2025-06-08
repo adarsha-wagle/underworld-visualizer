@@ -1,4 +1,4 @@
-import { useGLTF } from "@react-three/drei";
+import { Clone, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
@@ -6,7 +6,7 @@ import { useRef } from "react";
 
 const MODEL_PATH = "/models/coral.glb";
 
-type TCoral = GLTF & {
+type TSmallCoral = GLTF & {
   nodes: {
     [key: string]: any;
   };
@@ -17,8 +17,12 @@ type TCoral = GLTF & {
 
 useGLTF.preload(MODEL_PATH);
 
-function Coral() {
-  const coralGltf = useGLTF(MODEL_PATH) as TCoral;
+type TSmallCoralProps = {
+  position: [number, number, number];
+};
+
+function SmallCoral({ position }: TSmallCoralProps) {
+  const smallCoralGltf = useGLTF(MODEL_PATH) as TSmallCoral;
   const groupRef = useRef<THREE.Group>(null);
   const timeRef = useRef(0);
 
@@ -34,10 +38,10 @@ function Coral() {
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 25]}>
-      <primitive object={coralGltf.scene} />
+    <group ref={groupRef} position={position}>
+      <Clone object={smallCoralGltf.scene} />
     </group>
   );
 }
 
-export default Coral;
+export default SmallCoral;
