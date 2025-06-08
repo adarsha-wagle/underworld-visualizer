@@ -7,7 +7,6 @@ import Loader from "@/components/loader/loader";
 import AnglerFish from "../components/models/angler-fish";
 
 import SeaHorse from "@/components/models/seahorse";
-import GoldFish from "@/components/models/gold-fish";
 import Lobster from "@/components/models/lobster";
 import Shark from "@/components/models/shark";
 import Particles from "@/components/particles/particles";
@@ -23,7 +22,6 @@ function UnderWaterScene() {
       <Particles />
       <AnglerFish />
       <SeaHorse />
-      <GoldFish />
       <Shark />
       <Lobster />
       <Text

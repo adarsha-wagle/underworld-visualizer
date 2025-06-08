@@ -8,7 +8,6 @@ function Environment() {
   return (
     <>
       <Effects />
-
       <UnderwaterAmbient />
       <UnderwaterCaustics />
       <Lights />
