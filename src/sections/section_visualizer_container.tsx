@@ -6,51 +6,41 @@ import Loader from "@/components/loader/loader";
 
 import AnglerFish from "../components/models/angler-fish";
 
-import UnderwaterAmbient from "../components/environment/underwater-ambient";
 import Lights from "../components/environment/lights";
 import Seafloor from "../components/environment/seafloor";
-import UnderwaterCaustics from "../components/environment/underwater-caustics";
 import Corals from "../components/corals/corals";
 import KelpForest from "../components/kelp-forest/kelp-forest";
 import Bubbles from "../components/bubbles/bubbles";
-import MarineParticles from "../components/particles/marine-particles";
-import SwimmingFish from "../components/particles/swimming-fish";
-// import Player from "@/components/player/player";
-import Effects from "@/components/effects/effects";
 import SeaHorse from "@/components/models/seahorse";
 import GoldFish from "@/components/models/gold-fish";
-import SeaCoral from "@/components/models/sea-coral";
 import Coral from "@/components/models/coral";
 import RedCoral from "@/components/models/red-coral";
 import AnemoneCoral from "@/components/models/anemone-coral";
 import Lobster from "@/components/models/lobster";
 import Whale from "@/components/models/whale";
 import Shark from "@/components/models/shark";
+import Particles from "@/components/particles/particles";
+import Environment from "@/components/environment/environment";
+import Obstacles from "@/components/obstacles/obstacles";
+// import Turtle from "@/components/models/turtle";
 
 function UnderWaterScene() {
   return (
     <>
-      <Effects />
-      <UnderwaterAmbient />
-      <UnderwaterCaustics />
-      <Lights />
-      <Seafloor />
-      <Corals />
-      <KelpForest />
-      <Bubbles />
+      <Environment />
+      <Obstacles />
+      <Particles />
       <AnglerFish />
       <SeaHorse />
       <GoldFish />
       <AnemoneCoral />
       <Shark />
-      {/* <SeaCoral /> */}
       <Lobster />
       <Whale />
       <RedCoral />
-      <SwimmingFish />
       <Coral />
       <Text
-        position={[-100, 5, 100]} // near left edge
+        position={[-100, 5, 100]}
         fontSize={6}
         color="#4A90E2"
         anchorX="center"
@@ -59,7 +49,7 @@ function UnderWaterScene() {
         UNDERWATER WORLD
       </Text>{" "}
       <Text
-        position={[-100, 5, -100]} // near left edge
+        position={[-100, 5, -100]}
         fontSize={6}
         color="#4A90E2"
         anchorX="center"
@@ -67,7 +57,6 @@ function UnderWaterScene() {
       >
         UNDERWATER WORLD
       </Text>
-      <MarineParticles />
     </>
   );
 }

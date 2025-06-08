@@ -23,11 +23,16 @@ const options = [
   },
   {
     id: 5,
+    label: "Shift",
+    key: "Shift",
+  },
+  {
+    id: 6,
     label: "Cursor Lock / Unlock",
     key: "Esc",
   },
   {
-    id: 6,
+    id: 7,
     label: "Rotate",
     key: "Mouse",
   },

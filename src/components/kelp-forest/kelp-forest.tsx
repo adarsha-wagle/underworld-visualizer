@@ -1,14 +1,32 @@
 import { KelpStrand } from "./kelp-strand";
+import { WORLD } from "@/constants/world";
+import { useMemo } from "react";
 
-function KelpForest() {
+interface KelpForestProps {
+  count?: number;
+}
+
+function KelpForest({ count = 30 }: KelpForestProps) {
+  const kelpStrands = useMemo(() => {
+    const strands = [];
+
+    for (let i = 0; i < count; i++) {
+      const x = (Math.random() - 0.5) * WORLD.width;
+      const z = (Math.random() - 0.5) * WORLD.length;
+      const y = -WORLD.height / 2 + Math.random() * 2; // slight variation around bottom
+      const height = 14 + Math.random() * 10; // kelp height from 14 to 24
+
+      strands.push({ position: [x, y, z] as [number, number, number], height });
+    }
+
+    return strands;
+  }, [count]);
+
   return (
     <>
-      <KelpStrand position={[-40, -10, -5]} height={20} />
-      <KelpStrand position={[-38, -12, -8]} height={18} />
-      <KelpStrand position={[-42, -11, -2]} height={22} />
-      <KelpStrand position={[25, -15, 25]} height={16} />
-      <KelpStrand position={[28, -13, 22]} height={19} />
-      <KelpStrand position={[22, -16, 28]} height={17} />{" "}
+      {kelpStrands.map((kelp, index) => (
+        <KelpStrand key={index} position={kelp.position} height={kelp.height} />
+      ))}
     </>
   );
 }

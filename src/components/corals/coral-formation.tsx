@@ -17,34 +17,18 @@ export function CoralFormation({
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Gentle swaying motion like underwater plants
       meshRef.current.rotation.x =
-        Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+        Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
       meshRef.current.rotation.z =
-        Math.cos(state.clock.elapsedTime * 0.3) * 0.05;
+        Math.cos(state.clock.elapsedTime * 0.3) * 0.03;
     }
   });
 
   return (
-    <group position={position}>
-      <mesh ref={meshRef} scale={scale}>
-        <coneGeometry args={[2, 8, 6]} />
-        <meshStandardMaterial
-          color={color}
-          roughness={0.4}
-          metalness={0.1}
-          transparent
-          opacity={0.9}
-        />
-      </mesh>
-      {/* Soft coral glow */}
-      <pointLight
-        position={[0, 4, 0]}
-        color={color}
-        intensity={0.8}
-        distance={20}
-        decay={2}
-      />
-    </group>
+    <mesh ref={meshRef} position={position} scale={scale}>
+      {/* Lower-res coral: fewer segments */}
+      <coneGeometry args={[1.2, 5, 4]} />
+      <meshStandardMaterial color={color} roughness={0.6} metalness={0.05} />
+    </mesh>
   );
 }
