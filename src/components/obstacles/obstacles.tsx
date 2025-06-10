@@ -6,6 +6,7 @@ import SmallCorals from "../models/static/small-corals";
 import RedCorals from "../models/static/red-corals";
 import SeaCorals from "../models/static/sea-corals";
 import SpawnGoldFish from "../models/gold-fish/spawn-goldfish";
+import SpawnSeaHorses from "../models/sea-horse/spawn-seahorse";
 // import SpawnGoldFish from "../models/gold-fish/spawn-goldfish";
 
 function Obstacles() {
@@ -19,6 +20,7 @@ function Obstacles() {
       <SeaCorals />
       <SmallCorals />
       <SpawnGoldFish />
+      <SpawnSeaHorses />
     </>
   );
 }

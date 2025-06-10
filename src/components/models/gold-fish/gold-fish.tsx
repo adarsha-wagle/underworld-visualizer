@@ -2,7 +2,7 @@ import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
-import { useRef, useMemo, useEffect, type JSX } from "react";
+import { useRef, useMemo, type JSX } from "react";
 import { WORLD } from "@/constants/world";
 
 const MODEL_PATH = "/models/gold-fish.glb";
@@ -161,14 +161,7 @@ const wrapPosition = (position: THREE.Vector3): void => {
   else if (position.z < -halfZ) position.z = halfZ;
 };
 
-// Single goldfish component - highly optimized
-export function GoldFish({
-  fishData,
-  index,
-}: {
-  fishData: FishData;
-  index: number;
-}): JSX.Element {
+export function GoldFish({ fishData }: { fishData: FishData }): JSX.Element {
   const groupRef = useRef<THREE.Group>(null);
   const goldFishGltf = useGLTF(MODEL_PATH) as TGoldFishGlTF;
 
@@ -269,75 +262,6 @@ export function GoldFish({
   return (
     <group ref={groupRef}>
       <primitive object={clonedScene} />
-    </group>
-  );
-}
-
-// Alternative approach: Don't clone the scene at all (simpler but less memory efficient)
-export function GoldFishSimple({
-  fishData,
-  index,
-}: {
-  fishData: FishData;
-  index: number;
-}): JSX.Element {
-  const groupRef = useRef<THREE.Group>(null);
-  const goldFishGltf = useGLTF(MODEL_PATH) as TGoldFishGlTF;
-
-  // Directly use the original nodes (like your working version)
-  const finRefs = useMemo(
-    () => ({
-      tail: goldFishGltf.nodes.tail ?? null,
-      upperFin: goldFishGltf.nodes.upperFin ?? null,
-      lowerBackLeft: goldFishGltf.nodes.lowerBackLeftFin ?? null,
-      lowerBackRight: goldFishGltf.nodes.lowerBackRightFin ?? null,
-      lowerLeft: goldFishGltf.nodes.lowerLeftFin ?? null,
-      lowerRight: goldFishGltf.nodes.lowerRightFin ?? null,
-    }),
-    [goldFishGltf]
-  );
-
-  useFrame(({ clock }) => {
-    if (!groupRef.current) return;
-
-    const time = clock.getElapsedTime();
-    const deltaTime = Math.min(time - fishData.lastAnimTime, 0.1);
-    fishData.lastAnimTime = time;
-
-    if (deltaTime === 0) return;
-
-    // ... same behavior logic as above ...
-
-    // Apply position directly
-    groupRef.current.position.copy(fishData.position);
-    fishData.swimSpeed = fishData.velocity.length();
-
-    // Swimming sway animation
-    const sway = Math.sin(time * 2) * 0.05 * (1 + fishData.swimSpeed);
-    groupRef.current.rotation.z += sway * 0.1;
-    groupRef.current.position.y += Math.sin(time * 1.5) * 0.05;
-
-    // Animate fins - this will work because we're using original nodes
-    const {
-      tail,
-      upperFin,
-      lowerBackLeft,
-      lowerBackRight,
-      lowerLeft,
-      lowerRight,
-    } = finRefs;
-
-    if (tail) tail.rotation.y = Math.sin(time * 3) * 0.6;
-    if (upperFin) upperFin.rotation.y = Math.sin(time) * 0.15;
-    if (lowerBackLeft) lowerBackLeft.rotation.z = Math.sin(time * 8) * 0.4;
-    if (lowerBackRight) lowerBackRight.rotation.z = -Math.sin(time * 8) * 0.4;
-    if (lowerLeft) lowerLeft.rotation.z = Math.sin(time * 6) * 0.3;
-    if (lowerRight) lowerRight.rotation.z = -Math.sin(time * 6) * 0.3;
-  });
-
-  return (
-    <group ref={groupRef}>
-      <primitive object={goldFishGltf.scene} />
     </group>
   );
 }
