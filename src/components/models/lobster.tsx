@@ -99,7 +99,7 @@ function Lobster() {
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 60]}>
+    <group ref={groupRef} position={[0, 0, 10]}>
       <primitive object={lobsterGltf.scene} />
     </group>
   );

@@ -39,7 +39,7 @@ function SpawnSharks(): JSX.Element {
         direction: initialDirection,
         rotation: new THREE.Euler(0, 0, 0),
         behavior,
-        speed: 15 + Math.random() * 8, // Fast predators
+        speed: 4 + Math.random() * 8, // Fast predators
         scale: 0.9 + Math.random() * 0.4, // Varied shark sizes
         // Initialize behavior-specific data
         huntingTarget: new THREE.Vector3(
