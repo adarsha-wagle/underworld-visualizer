@@ -1,4 +1,4 @@
-// import Effects from "@/components/effects/effects";
+import Effects from "@/components/effects/effects";
 import Lights from "./lights";
 import UnderwaterAmbient from "./underwater-ambient";
 import UnderwaterCaustics from "./underwater-caustics";
@@ -8,7 +8,7 @@ import BoundaryCausticsWalls from "./boundary";
 function Environment() {
   return (
     <>
-      {/* <Effects /> */}
+      <Effects />
       <UnderwaterAmbient />
       <UnderwaterCaustics />
       <BoundaryCausticsWalls />
