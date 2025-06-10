@@ -7,7 +7,8 @@ import RedCorals from "../models/static/red-corals";
 import SeaCorals from "../models/static/sea-corals";
 import SpawnGoldFish from "../models/gold-fish/spawn-goldfish";
 import SpawnSeaHorses from "../models/sea-horse/spawn-seahorse";
-// import SpawnGoldFish from "../models/gold-fish/spawn-goldfish";
+import SpawnWhales from "../models/whale/spawn-whales";
+import SpawnSharks from "../models/shark/spawn-sharks";
 
 function Obstacles() {
   return (
@@ -21,6 +22,8 @@ function Obstacles() {
       <SmallCorals />
       <SpawnGoldFish />
       <SpawnSeaHorses />
+      <SpawnWhales />
+      <SpawnSharks />
     </>
   );
 }

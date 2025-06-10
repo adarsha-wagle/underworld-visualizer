@@ -6,9 +6,7 @@ import Loader from "@/components/loader/loader";
 
 import AnglerFish from "../components/models/angler-fish";
 
-import SeaHorse from "@/components/models/sea-horse/seahorse";
 import Lobster from "@/components/models/lobster";
-import Shark from "@/components/models/shark";
 import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
 import Obstacles from "@/components/obstacles/obstacles";
@@ -21,7 +19,6 @@ function UnderWaterScene() {
       <Obstacles />
       <Particles />
       <AnglerFish />
-      <Shark />
       <Lobster />
       <Text
         position={[-100, 5, 100]}

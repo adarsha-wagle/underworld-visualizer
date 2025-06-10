@@ -66,3 +66,7 @@ npx shadcn@latest add dialog
 <!-- TO FIX -->
 
 1. Cursor gets locked initially
+
+<!-- Bugs -->
+
+1. Seahorse disappears
