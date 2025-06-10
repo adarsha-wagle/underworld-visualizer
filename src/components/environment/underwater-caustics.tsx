@@ -1,6 +1,7 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { WORLD } from "@/constants/world";
 
 interface IUnderwaterCausticsProps {
   position?: [number, number, number];
@@ -8,7 +9,7 @@ interface IUnderwaterCausticsProps {
 }
 
 function UnderwaterCaustics({
-  position = [0, 30, 0],
+  position = [0, WORLD.height, 0],
   intensity = 0.8,
 }: IUnderwaterCausticsProps) {
   const causticsRef = useRef<THREE.Mesh>(null!);
@@ -83,7 +84,7 @@ function UnderwaterCaustics({
 
   return (
     <mesh ref={causticsRef} position={position} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[200, 200]} />
+      <planeGeometry args={[WORLD.width, WORLD.length]} />
       <shaderMaterial
         ref={materialRef}
         vertexShader={causticsVertexShader}

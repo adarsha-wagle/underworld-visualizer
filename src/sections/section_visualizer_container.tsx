@@ -10,6 +10,7 @@ import Lobster from "@/components/models/lobster";
 import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
 import Obstacles from "@/components/obstacles/obstacles";
+import Player from "@/components/player/player";
 // import Turtle from "@/components/models/turtle";
 
 function UnderWaterScene() {
@@ -58,8 +59,8 @@ function SectionVisualizerContainer() {
       <Suspense fallback={<Loader />}>
         <UnderWaterScene />
       </Suspense>
-      {/* <Player /> */}
-      <OrbitControls
+      <Player />
+      {/* <OrbitControls
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
@@ -68,7 +69,7 @@ function SectionVisualizerContainer() {
         minPolarAngle={0}
         maxPolarAngle={Math.PI}
         target={[0, 0, 0]}
-      />
+      /> */}
 
       <Stats />
     </Canvas>

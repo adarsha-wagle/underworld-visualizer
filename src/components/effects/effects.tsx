@@ -4,9 +4,9 @@ import {
   Bloom,
   Vignette,
   Noise,
-  // ChromaticAberration,
+  ChromaticAberration,
 } from "@react-three/postprocessing";
-// import { BlendFunction } from "postprocessing";
+import { BlendFunction } from "postprocessing";
 import type { JSX } from "react";
 
 function Effects() {
@@ -14,7 +14,7 @@ function Effects() {
     isBloomEnabled,
     isNoiseEnabled,
     isVignetteEnabled,
-    // chromaticAberration,
+    chromaticAberration,
   } = useSettingsContext();
 
   const effects = [
@@ -30,11 +30,11 @@ function Effects() {
       <Vignette key="vignette" eskil={false} offset={0.1} darkness={0.8} />
     ),
     isNoiseEnabled && <Noise key="noise" opacity={0.04} />,
-    // <ChromaticAberration
-    //   key="chromatic"
-    //   offset={[chromaticAberration, chromaticAberration]}
-    //   blendFunction={BlendFunction.NORMAL}
-    // />,
+    <ChromaticAberration
+      key="chromatic"
+      offset={[chromaticAberration, chromaticAberration]}
+      blendFunction={BlendFunction.NORMAL}
+    />,
   ].filter((effect): effect is JSX.Element => Boolean(effect));
 
   return <EffectComposer>{effects}</EffectComposer>;
