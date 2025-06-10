@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Stats, Text } from "@react-three/drei";
+import { Stats, Text } from "@react-three/drei";
 import { Suspense } from "react";
 
 import Loader from "@/components/loader/loader";

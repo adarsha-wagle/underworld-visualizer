@@ -83,7 +83,6 @@ function CausticsWall({
 export default function BoundaryCausticsWalls() {
   const halfW = WORLD.width / 2;
   const halfL = WORLD.length / 2;
-  const halfH = WORLD.height / 2;
 
   return (
     <>

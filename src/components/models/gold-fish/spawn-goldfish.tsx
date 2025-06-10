@@ -77,8 +77,8 @@ function SpawnGoldFish(): JSX.Element {
     <>
       {lighting}
       {/* Render fish with memoized components */}
-      {fishData.map((fish, index) => (
-        <GoldFish key={fish.id} fishData={fish} index={index} />
+      {fishData.map((fish) => (
+        <GoldFish key={fish.id} fishData={fish} />
       ))}
     </>
   );
