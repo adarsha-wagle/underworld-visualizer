@@ -4,6 +4,8 @@ import { Suspense } from "react";
 
 import Loader from "@/components/loader/loader";
 
+import { isDevelopment } from "@/constants/env";
+
 import Lobster from "@/components/models/lobster";
 import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
@@ -57,18 +59,8 @@ function SectionVisualizerContainer() {
         <UnderWaterScene />
       </Suspense>
       <Player />
-      {/* <OrbitControls
-        enablePan={true}
-        enableZoom={true}
-        enableRotate={true}
-        minDistance={2}
-        maxDistance={400}
-        minPolarAngle={0}
-        maxPolarAngle={Math.PI}
-        target={[0, 0, 0]}
-      /> */}
 
-      <Stats />
+      {isDevelopment && <Stats />}
     </Canvas>
   );
 }

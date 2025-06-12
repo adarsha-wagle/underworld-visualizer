@@ -48,12 +48,6 @@ interface AnglerFishData {
   swimSpeed: number;
   isHunting: boolean;
   lightIntensity: number;
-  audioData: {
-    bass: number;
-    mid: number;
-    treble: number;
-    overall: number;
-  };
 }
 
 // Preload model
@@ -80,30 +74,28 @@ const updateLurker = (fish: AnglerFishData, deltaTime: number): void => {
   if (fish.waitTimer > 0) {
     fish.waitTimer -= deltaTime;
     fish.velocity.set(0, 0, 0);
-    // Dim light while waiting
-    fish.audioData.overall = 0.2;
     return;
   }
 
-  if (fish.behaviorTimer > 3 + Math.random() * 4) {
-    if (Math.random() < 0.6) {
-      fish.waitTimer = 2 + Math.random() * 3;
+  if (fish.behaviorTimer > 2 + Math.random() * 2) {
+    if (Math.random() < 0.4) {
+      fish.waitTimer = 1 + Math.random() * 1.5;
     } else {
       fish.direction
         .set(
-          (Math.random() - 0.5) * 1.5,
-          (Math.random() - 0.5) * 0.3,
-          (Math.random() - 0.5) * 1.5
+          (Math.random() - 0.5) * 2,
+          (Math.random() - 0.5) * 0.5,
+          (Math.random() - 0.5) * 2
         )
         .normalize();
     }
     fish.behaviorTimer = 0;
   }
 
-  tempVector.copy(fish.direction).multiplyScalar(fish.speed * 0.5 * deltaTime);
+  // Always move when not waiting
+  tempVector.copy(fish.direction).multiplyScalar(fish.speed * deltaTime);
   fish.position.add(tempVector);
-  fish.velocity.copy(fish.direction).multiplyScalar(fish.speed * 0.5);
-  fish.audioData.overall = 0.4 + Math.random() * 0.3;
+  fish.velocity.copy(fish.direction).multiplyScalar(fish.speed);
 };
 
 const updateProwler = (fish: AnglerFishData, deltaTime: number): void => {
@@ -125,7 +117,6 @@ const updateProwler = (fish: AnglerFishData, deltaTime: number): void => {
   tempVector.copy(fish.direction).multiplyScalar(fish.speed * deltaTime);
   fish.position.add(tempVector);
   fish.velocity.copy(fish.direction).multiplyScalar(fish.speed);
-  fish.audioData.overall = 0.5 + Math.sin(fish.behaviorTimer * 2) * 0.2;
 };
 
 const updateAmbush = (fish: AnglerFishData, deltaTime: number): void => {
@@ -133,21 +124,23 @@ const updateAmbush = (fish: AnglerFishData, deltaTime: number): void => {
 
   if (fish.isHunting) {
     // Quick burst movement
-    tempVector.copy(fish.direction).multiplyScalar(fish.speed * 2 * deltaTime);
+    tempVector.copy(fish.direction).multiplyScalar(fish.speed * 3 * deltaTime);
     fish.position.add(tempVector);
-    fish.velocity.copy(fish.direction).multiplyScalar(fish.speed * 2);
-    fish.audioData.overall = 0.8; // Bright light when hunting
+    fish.velocity.copy(fish.direction).multiplyScalar(fish.speed * 3);
 
-    if (fish.huntTimer > 0.5) {
+    if (fish.huntTimer > 1) {
       fish.isHunting = false;
       fish.huntTimer = 0;
     }
   } else {
-    // Wait and watch
-    fish.velocity.set(0, 0, 0);
-    fish.audioData.overall = 0.3; // Dim light while waiting
+    // Slow stalking movement instead of complete stillness
+    tempVector
+      .copy(fish.direction)
+      .multiplyScalar(fish.speed * 0.2 * deltaTime);
+    fish.position.add(tempVector);
+    fish.velocity.copy(fish.direction).multiplyScalar(fish.speed * 0.2);
 
-    if (fish.huntTimer > 3 + Math.random() * 4) {
+    if (fish.huntTimer > 2 + Math.random() * 2) {
       fish.isHunting = true;
       fish.direction
         .set(
@@ -168,7 +161,6 @@ const updatePatrol = (fish: AnglerFishData, time: number): void => {
 
   fish.direction.subVectors(fish.patrolEnd, fish.patrolStart).normalize();
   fish.velocity.copy(fish.direction).multiplyScalar(fish.speed);
-  fish.audioData.overall = 0.4 + Math.sin(time * 1.5) * 0.2;
 };
 
 // Optimized boundary wrapping
@@ -276,52 +268,45 @@ export function AnglerFish({
     }
 
     // Subtle body movement
-    const bodyIntensity = fishData.audioData.overall * 0.2;
-    groupRef.current.rotation.y +=
-      Math.sin(time * 1.5) * 0.001 * (1 + bodyIntensity);
-    groupRef.current.position.y +=
-      Math.sin(time * 0.8) * (0.01 + bodyIntensity * 0.03);
+    groupRef.current.rotation.y += Math.sin(time * 1.5) * 0.001;
+    groupRef.current.position.y += Math.sin(time * 0.8) * 0.01;
 
-    // Animate bulb glow
+    // Swimming sway animation (like goldfish)
+    const sway = Math.sin(time * 2) * 0.03 * (1 + fishData.swimSpeed);
+    groupRef.current.rotation.z += sway * 0.1;
+
+    // Animate bulb glow - simple pulsing
     if (meshRefs.bulb?.material) {
       const material = meshRefs.bulb.material as THREE.MeshStandardMaterial;
-      let glowIntensity = fishData.lightIntensity * fishData.audioData.overall;
-      glowIntensity += Math.sin(time * 2) * 0.1 + Math.sin(time * 3.7) * 0.05;
+      const glowIntensity =
+        fishData.lightIntensity *
+        (0.5 + Math.sin(time * 2) * 0.3 + Math.sin(time * 3.7) * 0.1);
       material.emissiveIntensity = Math.max(0, Math.min(2, glowIntensity));
     }
 
-    // Animate fins
-    const finsIntensity = fishData.audioData.overall * 0.3;
+    // Animate fins - similar to goldfish but slower
     if (meshRefs.leftFin) {
-      meshRefs.leftFin.rotation.x =
-        Math.sin(time * 2.5) * (0.1 + finsIntensity * 0.2);
-      meshRefs.leftFin.rotation.y =
-        Math.cos(time * 1.8) * (0.05 + finsIntensity * 0.1);
+      meshRefs.leftFin.rotation.x = Math.sin(time * 2) * 0.2;
+      meshRefs.leftFin.rotation.y = Math.cos(time * 1.5) * 0.1;
     }
     if (meshRefs.rightFin) {
-      meshRefs.rightFin.rotation.x =
-        -Math.sin(time * 2.5) * (0.1 + finsIntensity * 0.2);
-      meshRefs.rightFin.rotation.y =
-        -Math.cos(time * 1.8) * (0.05 + finsIntensity * 0.1);
+      meshRefs.rightFin.rotation.x = -Math.sin(time * 2) * 0.2;
+      meshRefs.rightFin.rotation.y = -Math.cos(time * 1.5) * 0.1;
     }
 
-    // Animate tail
+    // Animate tail - swimming motion
     if (meshRefs.tail) {
-      const tailIntensity = fishData.audioData.overall * 0.4;
       meshRefs.tail.rotation.y =
-        Math.sin(time * 3) * (0.15 + tailIntensity * 0.3);
-      meshRefs.tail.rotation.z =
-        Math.cos(time * 2.2) * (0.08 + tailIntensity * 0.15);
+        Math.sin(time * 2.5) * 0.4 * (0.5 + fishData.swimSpeed);
+      meshRefs.tail.rotation.z = Math.cos(time * 2) * 0.2;
     }
 
     // Animate eyes with blinking
     const animateEye = (eye: THREE.Mesh | null, offset = 0) => {
       if (!eye) return;
-      const intensity = fishData.audioData.overall * 0.3;
 
-      eye.rotation.x = Math.sin(time * 1.3 + offset) * (0.05 + intensity * 0.1);
-      eye.rotation.y =
-        Math.cos(time * 0.9 + offset) * (0.03 + intensity * 0.08);
+      eye.rotation.x = Math.sin(time * 1.3 + offset) * 0.05;
+      eye.rotation.y = Math.cos(time * 0.9 + offset) * 0.03;
 
       // Blinking
       const blinkTrigger = Math.sin(time * 0.8 + offset);
@@ -343,7 +328,7 @@ export function AnglerFish({
         <pointLight
           position={[0, 0.5, 0.8]}
           color={0x00ffff}
-          intensity={fishData.lightIntensity * fishData.audioData.overall}
+          intensity={fishData.lightIntensity * 0.5}
           distance={3}
           decay={2}
         />

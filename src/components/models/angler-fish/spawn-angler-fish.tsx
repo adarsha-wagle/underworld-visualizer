@@ -4,12 +4,7 @@ import { WORLD } from "@/constants/world";
 import { AnglerFish, type TAnglerFishBehavior } from "./angler-fish";
 
 function SpawnAnglerFish(): JSX.Element {
-  const behaviors: TAnglerFishBehavior[] = [
-    "lurker",
-    "prowler",
-    "ambush",
-    "patrol",
-  ];
+  const behaviors: TAnglerFishBehavior[] = ["patrol"];
 
   // Optimize angler fish data initialization
   const anglerFishData = useMemo(() => {
@@ -36,7 +31,7 @@ function SpawnAnglerFish(): JSX.Element {
         ).normalize(),
         rotation: new THREE.Euler(0, 0, 0),
         behavior,
-        speed: 0.1 + Math.random() * 0.8, // Generally slower than goldfish
+        speed: 2 + Math.random() * 1.0, // Increased speed range
         // Initialize behavior-specific data
         patrolStart: new THREE.Vector3(
           (Math.random() - 0.5) * WORLD.width * 0.6,
@@ -55,13 +50,6 @@ function SpawnAnglerFish(): JSX.Element {
         swimSpeed: 0,
         isHunting: false,
         lightIntensity: 0.3 + Math.random() * 0.7, // Randomize bulb brightness
-        // Audio data for light effects (can be connected to actual audio later)
-        audioData: {
-          bass: 0,
-          mid: 0,
-          treble: 0,
-          overall: 0,
-        },
       };
     });
   }, []);
