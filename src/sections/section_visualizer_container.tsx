@@ -4,8 +4,6 @@ import { Suspense } from "react";
 
 import Loader from "@/components/loader/loader";
 
-import AnglerFish from "../components/models/angler-fish";
-
 import Lobster from "@/components/models/lobster";
 import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
@@ -19,7 +17,6 @@ function UnderWaterScene() {
       <Environment />
       <Obstacles />
       <Particles />
-      <AnglerFish />
       <Lobster />
       <Text
         position={[-100, 5, 100]}
