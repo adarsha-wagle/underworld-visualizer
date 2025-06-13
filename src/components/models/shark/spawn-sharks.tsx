@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo, type JSX } from "react";
+import { useMemo, type JSX, memo } from "react";
 import type { TSharkBehavior } from "./shark";
 import { WORLD } from "@/constants/world";
 import Shark from "./shark";
@@ -109,4 +109,4 @@ function SpawnSharks(): JSX.Element {
   );
 }
 
-export default SpawnSharks;
+export default memo(SpawnSharks);

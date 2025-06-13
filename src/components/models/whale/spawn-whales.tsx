@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo, type JSX } from "react";
+import { memo, useMemo, type JSX } from "react";
 
 import { WORLD } from "@/constants/world";
 import type { TWhaleBehavior } from "./whale";
@@ -106,4 +106,4 @@ function SpawnWhales(): JSX.Element {
   );
 }
 
-export default SpawnWhales;
+export default memo(SpawnWhales);

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo, type JSX } from "react";
+import { memo, useMemo, type JSX } from "react";
 import { WORLD } from "@/constants/world";
 import { GoldFish, type TGoldFishBehavior } from "./gold-fish";
 
@@ -84,4 +84,4 @@ function SpawnGoldFish(): JSX.Element {
   );
 }
 
-export default SpawnGoldFish;
+export default memo(SpawnGoldFish);

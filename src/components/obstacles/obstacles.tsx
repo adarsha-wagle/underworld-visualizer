@@ -10,7 +10,7 @@ import SpawnSeaHorses from "../models/sea-horse/spawn-seahorse";
 import SpawnWhales from "../models/whale/spawn-whales";
 import SpawnSharks from "../models/shark/spawn-sharks";
 import SpawnLobsters from "../models/lobster/spawn-lobsters";
-import SpawnAnglerFish from "../models/angler-fish/spawn-angler-fish";
+// import SpawnAnglerFish from "../models/angler-fish/spawn-angler-fish";
 
 function Obstacles() {
   return (
@@ -27,7 +27,7 @@ function Obstacles() {
       <SpawnWhales />
       <SpawnSharks />
       <SpawnLobsters />
-      <SpawnAnglerFish />
+      {/* <SpawnAnglerFish /> */}
     </>
   );
 }

@@ -63,10 +63,10 @@ npx shadcn@latest add dialog
 4. Add Settings instead of simple btn
 5. locking player from going too far
 
-<!-- TO FIX -->
-
-1. Cursor gets locked initially
-
 <!-- Bugs -->
 
 1. Seahorse disappears
+
+<!-- Fix Rotation -->
+
+1. Fix fish rotation

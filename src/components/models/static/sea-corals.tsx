@@ -1,5 +1,5 @@
 import { WORLD } from "@/constants/world";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import SeaCoral from "./sea-coral";
 
 interface IRedCoralsProps {
@@ -30,4 +30,4 @@ function SeaCorals({ count = 4 }: IRedCoralsProps) {
   );
 }
 
-export default SeaCorals;
+export default memo(SeaCorals);

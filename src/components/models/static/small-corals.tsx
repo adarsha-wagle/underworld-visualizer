@@ -1,5 +1,5 @@
 import { WORLD } from "@/constants/world";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import SmallCoral from "./small-coral";
 
 interface IRedSmallCoralsProps {
@@ -30,4 +30,4 @@ function SmallCorals({ count = 40 }: IRedSmallCoralsProps) {
   );
 }
 
-export default SmallCorals;
+export default memo(SmallCorals);

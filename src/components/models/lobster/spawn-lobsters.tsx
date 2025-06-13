@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, memo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -505,4 +505,4 @@ function SpawnLobsters(): React.JSX.Element {
   );
 }
 
-export default SpawnLobsters;
+export default memo(SpawnLobsters);

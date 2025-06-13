@@ -1,5 +1,5 @@
 import { CoralFormation } from "./coral-formation";
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { WORLD } from "@/constants/world";
 
 interface CoralsProps {
@@ -52,4 +52,4 @@ function Corals({ count = 10 }: CoralsProps) {
   );
 }
 
-export default Corals;
+export default memo(Corals);

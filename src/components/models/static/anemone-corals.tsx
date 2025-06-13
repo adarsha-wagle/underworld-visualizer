@@ -1,5 +1,5 @@
 import { WORLD } from "@/constants/world";
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import AnemoneCoral from "./anemone-coral";
 
 interface IRedCoralsProps {
@@ -30,4 +30,4 @@ function AnemoneCorals({ count = 30 }: IRedCoralsProps) {
   );
 }
 
-export default AnemoneCorals;
+export default memo(AnemoneCorals);

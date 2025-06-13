@@ -1,6 +1,6 @@
 import { KelpStrand } from "./kelp-strand";
 import { WORLD } from "@/constants/world";
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 
 interface KelpForestProps {
   count?: number;
@@ -31,4 +31,4 @@ function KelpForest({ count = 30 }: KelpForestProps) {
   );
 }
 
-export default KelpForest;
+export default memo(KelpForest);

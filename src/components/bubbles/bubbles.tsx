@@ -1,5 +1,6 @@
 import { WORLD } from "@/constants/world";
 import BubbleStream from "./bubble-stream";
+import { memo } from "react";
 
 // Utility to generate a random position on the ground level
 function randomGroundPosition(): [number, number, number] {
@@ -30,4 +31,4 @@ function Bubbles() {
   );
 }
 
-export default Bubbles;
+export default memo(Bubbles);

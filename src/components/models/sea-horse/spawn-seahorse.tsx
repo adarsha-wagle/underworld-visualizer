@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo, type JSX } from "react";
+import { memo, useMemo, type JSX } from "react";
 
 import { WORLD } from "@/constants/world";
 import type { TSeaHorseBehavior } from "./seahorse";
@@ -91,4 +91,4 @@ function SpawnSeaHorses(): JSX.Element {
   );
 }
 
-export default SpawnSeaHorses;
+export default memo(SpawnSeaHorses);
