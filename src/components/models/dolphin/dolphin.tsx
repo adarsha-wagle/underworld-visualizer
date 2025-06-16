@@ -3,6 +3,7 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { WORLD } from "@/constants/world";
+import { deltaAngle, lerpAngle } from "@/lib/math";
 
 const MODEL_PATH = "/models/dolphin.glb";
 
@@ -39,21 +40,84 @@ interface IDolphinProps {
 }
 
 useGLTF.preload(MODEL_PATH);
+const generateNewPosition = (dolphin: IDolphin): [number, number, number] => {
+  const { position, direction } = dolphin;
+
+  // 1. Random angle between 70 and 140 degrees
+  const angleDeg = 70 + Math.random() * (110 - 70);
+  const angleRad = THREE.MathUtils.degToRad(angleDeg);
+
+  // 2. Randomly rotate left or right
+  const sign = Math.random() > 0.5 ? 1 : -1;
+
+  // 3. New direction rotated from current direction (Y-axis only)
+  const newDirection = direction
+    .clone()
+    .applyAxisAngle(new THREE.Vector3(0, 1, 0), angleRad * sign);
+
+  // 4. Choose travel distance
+  const distance = 30 + Math.random() * 30;
+
+  // 5. Compute new target position
+  const rawPosition = position
+    .clone()
+    .add(newDirection.multiplyScalar(distance));
+
+  // 6. Clamp within world bounds
+  const clampedX = THREE.MathUtils.clamp(
+    rawPosition.x,
+    -WORLD.width / 2,
+    WORLD.width / 2
+  );
+  const clampedY = THREE.MathUtils.clamp(
+    rawPosition.y,
+    -WORLD.height * 0.2,
+    WORLD.height * 0.2
+  ); // optional Y limit
+  const clampedZ = THREE.MathUtils.clamp(
+    rawPosition.z,
+    -WORLD.height / 2,
+    WORLD.height / 2
+  );
+
+  return [clampedX, clampedY, clampedZ];
+};
 
 const updateSwim = (dolphin: IDolphin, deltaTime: number): void => {
-  // Add some swimming variation
   dolphin.behaviorTimer += deltaTime;
-
   if (dolphin.behaviorTimer > 2 + Math.random() * 2) {
     const variation = tempVectorSwim.set(
       (Math.random() - 0.5) * 0.2,
       (Math.random() - 0.5) * 0.1,
       (Math.random() - 0.5) * 0.2
     );
-
     dolphin.direction.add(variation.multiplyScalar(0.1)).normalize();
     dolphin.behaviorTimer = 0;
   }
+};
+
+const updateZigzag = (dolphin: IDolphin, deltaTime: number): void => {
+  // Wideness of the zigzag (amplitude in world units)
+  const amplitude = 4;
+  const frequency = 0.1; // cycles per second
+
+  // Create perpendicular vector (side direction)
+  const sideVector = new THREE.Vector3().copy(dolphin.direction);
+  sideVector
+    .applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
+    .normalize();
+
+  // Calculate side offset using sine wave
+  const time = dolphin.behaviorTimer;
+  const offsetAmount = Math.sin(time * frequency * Math.PI * 2) * amplitude;
+
+  // Calculate the desired direction by blending toward side offset
+  const targetOffset = sideVector.multiplyScalar(offsetAmount);
+
+  // Smoothly nudge position sideways (not direction)
+  dolphin.position.add(targetOffset.clone().multiplyScalar(deltaTime));
+
+  dolphin.behaviorTimer += deltaTime;
 };
 
 const move = (dolphin: IDolphin, deltaTime: number): void => {
@@ -66,11 +130,8 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
     dolphin.hasReachedTarget = true;
 
     // Generate next target - FIXED: Set targetPosition, not targetDirection
-    dolphin.targetPosition.set(
-      (Math.random() - 0.5) * WORLD.width, // Center around 0
-      (Math.random() - 0.5) * WORLD.height * 0.3, // Limited Y movement
-      (Math.random() - 0.5) * WORLD.height // Center around 0
-    );
+    const [x, y, z] = generateNewPosition(dolphin);
+    dolphin.targetPosition.set(x, y, z);
 
     dolphin.hasReachedTarget = false;
   }
@@ -123,7 +184,11 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
 
   // Banking turn effect - FIXED: Calculate turn rate properly
   const previousAngle = dolphin.rotation.y;
-  const turnRate = Math.abs(angle - previousAngle);
+  const targetAngle = Math.atan2(dolphin.direction.x, dolphin.direction.z);
+
+  dolphin.rotation.y = lerpAngle(previousAngle, targetAngle, deltaTime * 2);
+
+  const turnRate = Math.abs(deltaAngle(previousAngle, dolphin.rotation.y));
   dolphin.rotation.z = Math.sin(turnRate * 10) * 0.3; // Amplify for visible effect
 
   // Pitch based on vertical movement and distance to target
@@ -141,6 +206,7 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
 
 export default function Dolphin({ dolphin }: IDolphinProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const targetRef = useRef<THREE.Mesh>(null);
   const { scene, animations } = useGLTF(MODEL_PATH);
   const { actions } = useAnimations(animations, groupRef);
 
@@ -162,7 +228,7 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
         updateSwim(dolphin, delta);
         break;
       case "zigzag":
-        updateSwim(dolphin, delta);
+        updateZigzag(dolphin, delta);
         break;
       default:
         break;
@@ -186,6 +252,8 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
       dolphin.rotation.z,
       0.15
     );
+
+    targetRef.current?.position.copy(dolphin.targetPosition);
   });
 
   return (
@@ -195,17 +263,15 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
 
       {/* Target position indicator - FIXED: Make it visible */}
       {dolphin.targetPosition && (
-        <mesh position={dolphin.targetPosition}>
+        <mesh ref={targetRef} position={dolphin.targetPosition}>
           <sphereGeometry args={[1.0, 16, 16]} />
           <meshBasicMaterial color="red" />
         </mesh>
       )}
-
-      {/* Reached target indicator - FIXED: Different position and geometry */}
-      {dolphin.hasReachedTarget && (
+      {dolphin.position && (
         <mesh position={dolphin.position}>
-          <boxGeometry args={[2.0, 2.0, 2.0]} />
-          <meshBasicMaterial color="green" wireframe />
+          <sphereGeometry args={[1.0, 16, 16]} />
+          <meshBasicMaterial color="blue" />
         </mesh>
       )}
     </>
