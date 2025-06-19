@@ -11,9 +11,9 @@ function RedCorals({ count = 10 }: IRedCoralsProps) {
     const strands = [];
 
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * WORLD.width;
-      const z = (Math.random() - 0.5) * WORLD.length;
-      const y = -WORLD.height / 2; // slight variation around bottom
+      const x = (Math.random() - 0.5) * WORLD.x;
+      const z = (Math.random() - 0.5) * WORLD.z;
+      const y = -WORLD.y / 2; // slight variation around bottom
 
       strands.push({ position: [x, y, z] as [number, number, number] });
     }

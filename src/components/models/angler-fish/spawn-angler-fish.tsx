@@ -9,9 +9,9 @@ function SpawnAnglerFish(): JSX.Element {
   // Optimize angler fish data initialization
   const anglerFishData = useMemo(() => {
     const fishCount = 8; // Fewer angler fish since they're typically more solitary
-    const halfBoundsX = WORLD.width * 0.45;
-    const halfBoundsY = WORLD.height * 0.3; // Keep them more in lower areas
-    const halfBoundsZ = WORLD.length * 0.45;
+    const halfBoundsX = WORLD.x * 0.45;
+    const halfBoundsY = WORLD.y * 0.3; // Keep them more in lower areas
+    const halfBoundsZ = WORLD.z * 0.45;
 
     return Array.from({ length: fishCount }, (_, i) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
@@ -20,7 +20,7 @@ function SpawnAnglerFish(): JSX.Element {
         id: i,
         position: new THREE.Vector3(
           (Math.random() - 0.5) * halfBoundsX * 2,
-          -WORLD.height * 0.1 + (Math.random() - 0.5) * halfBoundsY * 2, // Bias towards lower depths
+          -WORLD.y * 0.1 + (Math.random() - 0.5) * halfBoundsY * 2, // Bias towards lower depths
           (Math.random() - 0.5) * halfBoundsZ * 2
         ),
         velocity: new THREE.Vector3(0, 0, 0),
@@ -34,14 +34,14 @@ function SpawnAnglerFish(): JSX.Element {
         speed: 2 + Math.random() * 1.0, // Increased speed range
         // Initialize behavior-specific data
         patrolStart: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.6,
-          -WORLD.height * 0.2 + (Math.random() - 0.5) * WORLD.height * 0.4,
-          (Math.random() - 0.5) * WORLD.length * 0.6
+          (Math.random() - 0.5) * WORLD.x * 0.6,
+          -WORLD.y * 0.2 + (Math.random() - 0.5) * WORLD.y * 0.4,
+          (Math.random() - 0.5) * WORLD.z * 0.6
         ),
         patrolEnd: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.6,
-          -WORLD.height * 0.2 + (Math.random() - 0.5) * WORLD.height * 0.4,
-          (Math.random() - 0.5) * WORLD.length * 0.6
+          (Math.random() - 0.5) * WORLD.x * 0.6,
+          -WORLD.y * 0.2 + (Math.random() - 0.5) * WORLD.y * 0.4,
+          (Math.random() - 0.5) * WORLD.z * 0.6
         ),
         huntTimer: 0,
         waitTimer: 0,

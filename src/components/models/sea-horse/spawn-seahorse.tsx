@@ -17,9 +17,9 @@ function SpawnSeaHorses(): JSX.Element {
   // Generate seahorse data
   const seahorseData = useMemo(() => {
     const seahorseCount = 8; // Fewer than goldfish since seahorses are typically less numerous
-    const halfBoundsX = WORLD.width * 0.4;
-    const halfBoundsY = WORLD.height * 0.4;
-    const halfBoundsZ = WORLD.length * 0.4;
+    const halfBoundsX = WORLD.x * 0.4;
+    const halfBoundsY = WORLD.y * 0.4;
+    const halfBoundsZ = WORLD.z * 0.4;
 
     return Array.from({ length: seahorseCount }, (_, i) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
@@ -43,9 +43,9 @@ function SpawnSeaHorses(): JSX.Element {
         speed: 1 + Math.random() * 2, // Slower than goldfish
         // Initialize behavior-specific data
         circleCenter: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.6,
-          (Math.random() - 0.5) * WORLD.height * 0.6,
-          (Math.random() - 0.5) * WORLD.length * 0.6
+          (Math.random() - 0.5) * WORLD.x * 0.6,
+          (Math.random() - 0.5) * WORLD.y * 0.6,
+          (Math.random() - 0.5) * WORLD.z * 0.6
         ),
         circleRadius: 20 + Math.random() * 25,
         zigzagTimer: 0,

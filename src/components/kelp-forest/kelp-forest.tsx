@@ -11,9 +11,9 @@ function KelpForest({ count = 30 }: KelpForestProps) {
     const strands = [];
 
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * WORLD.width;
-      const z = (Math.random() - 0.5) * WORLD.length;
-      const y = -WORLD.height / 2 + Math.random() * 2; // slight variation around bottom
+      const x = (Math.random() - 0.5) * WORLD.x;
+      const z = (Math.random() - 0.5) * WORLD.z;
+      const y = -WORLD.y / 2 + Math.random() * 2; // slight variation around bottom
       const height = 14 + Math.random() * 10; // kelp height from 14 to 24
 
       strands.push({ position: [x, y, z] as [number, number, number], height });

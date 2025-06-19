@@ -6,8 +6,8 @@ function Seafloor() {
   const meshRef = useRef<THREE.Mesh>(null!);
 
   const geometry = useMemo(() => {
-    const width = WORLD.width;
-    const height = WORLD.length;
+    const width = WORLD.x;
+    const height = WORLD.z;
     const segments = 100;
 
     const geo = new THREE.PlaneGeometry(width, height, segments, segments);

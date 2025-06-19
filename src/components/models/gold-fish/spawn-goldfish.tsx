@@ -14,9 +14,9 @@ function SpawnGoldFish(): JSX.Element {
   // Optimize fish data initialization
   const fishData = useMemo(() => {
     const fishCount = 15;
-    const halfBoundsX = WORLD.width * 0.4;
-    const halfBoundsY = WORLD.height * 0.4;
-    const halfBoundsZ = WORLD.length * 0.4;
+    const halfBoundsX = WORLD.x * 0.4;
+    const halfBoundsY = WORLD.y * 0.4;
+    const halfBoundsZ = WORLD.z * 0.4;
 
     return Array.from({ length: fishCount }, (_, i) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
@@ -39,9 +39,9 @@ function SpawnGoldFish(): JSX.Element {
         speed: 0.3 + Math.random() * 1.2,
         // Initialize behavior-specific data
         circleCenter: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.6,
-          (Math.random() - 0.5) * WORLD.height * 0.6,
-          (Math.random() - 0.5) * WORLD.length * 0.6
+          (Math.random() - 0.5) * WORLD.x * 0.6,
+          (Math.random() - 0.5) * WORLD.y * 0.6,
+          (Math.random() - 0.5) * WORLD.z * 0.6
         ),
         circleRadius: 30 + Math.random() * 30,
         zigzagTimer: 0,

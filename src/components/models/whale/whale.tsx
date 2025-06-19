@@ -3,15 +3,9 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
 import { useRef, useMemo, type JSX } from "react";
+import { WORLD } from "@/constants/world";
 
 const MODEL_PATH = "/models/whale.glb";
-
-// World boundaries (larger for whales)
-const WORLD = {
-  width: 400,
-  height: 60,
-  length: 400,
-};
 
 // Pre-allocated objects for performance
 const tempVector = new THREE.Vector3();
@@ -173,9 +167,9 @@ const updatePodFollower = (whale: WhaleData, time: number): void => {
 
 // Optimized boundary wrapping
 const wrapPosition = (position: THREE.Vector3): void => {
-  const halfX = WORLD.width / 2;
-  const halfY = WORLD.height / 2;
-  const halfZ = WORLD.length / 2;
+  const halfX = WORLD.x / 2;
+  const halfY = WORLD.y / 2;
+  const halfZ = WORLD.z / 2;
 
   if (position.x > halfX) position.x = -halfX;
   else if (position.x < -halfX) position.x = halfX;

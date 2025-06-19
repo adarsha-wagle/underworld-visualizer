@@ -8,7 +8,7 @@ interface SwimmingFishProps {
   count?: number;
 }
 
-function BigDebris({ count = WORLD.width }: SwimmingFishProps) {
+function BigDebris({ count = WORLD.x }: SwimmingFishProps) {
   const fishRef = useRef<THREE.Points | null>(null);
   const velocities = useRef<Float32Array | null>(null);
 
@@ -20,9 +20,9 @@ function BigDebris({ count = WORLD.width }: SwimmingFishProps) {
       const i3 = i * 3;
 
       // Spread within world bounds
-      positions[i3] = (Math.random() - 0.5) * WORLD.width;
-      positions[i3 + 1] = (Math.random() - 0.5) * WORLD.height;
-      positions[i3 + 2] = (Math.random() - 0.5) * WORLD.length;
+      positions[i3] = (Math.random() - 0.5) * WORLD.x;
+      positions[i3 + 1] = (Math.random() - 0.5) * WORLD.y;
+      positions[i3 + 2] = (Math.random() - 0.5) * WORLD.z;
 
       // Tropical fish colors
       const colorType = Math.random();
@@ -64,9 +64,9 @@ function BigDebris({ count = WORLD.width }: SwimmingFishProps) {
       posArray[i3 + 2] += vels[i3 + 2] + Math.sin(time * 0.5 + i) * 0.005;
 
       // Clamp within world boundaries
-      if (Math.abs(posArray[i3]) > WORLD.width / 2) vels[i3] *= -1;
-      if (Math.abs(posArray[i3 + 1]) > WORLD.height / 2) vels[i3 + 1] *= -1;
-      if (Math.abs(posArray[i3 + 2]) > WORLD.length / 2) vels[i3 + 2] *= -1;
+      if (Math.abs(posArray[i3]) > WORLD.x / 2) vels[i3] *= -1;
+      if (Math.abs(posArray[i3 + 1]) > WORLD.y / 2) vels[i3 + 1] *= -1;
+      if (Math.abs(posArray[i3 + 2]) > WORLD.z / 2) vels[i3 + 2] *= -1;
     }
 
     ref.geometry.attributes.position.needsUpdate = true;

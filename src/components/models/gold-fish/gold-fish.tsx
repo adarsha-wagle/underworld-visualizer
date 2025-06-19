@@ -147,9 +147,9 @@ const updateZigzag = (fish: FishData, deltaTime: number): void => {
 
 // Optimized boundary wrapping
 const wrapPosition = (position: THREE.Vector3): void => {
-  const halfX = WORLD.width / 2;
-  const halfY = WORLD.height / 2;
-  const halfZ = WORLD.length / 2;
+  const halfX = WORLD.x / 2;
+  const halfY = WORLD.y / 2;
+  const halfZ = WORLD.z / 2;
 
   if (position.x > halfX) position.x = -halfX;
   else if (position.x < -halfX) position.x = halfX;

@@ -3,7 +3,6 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { WORLD } from "@/constants/world";
-import { deltaAngle, lerpAngle } from "@/lib/math";
 
 const MODEL_PATH = "/models/dolphin.glb";
 
@@ -22,17 +21,19 @@ export interface IDolphin {
   rotation: THREE.Euler;
   behaviorTimer: number;
 
-  targetDirection: THREE.Vector3; // where dolphin wants to go
-  hasReachedTarget: boolean; // Whether dolphin has reached the target initally set to false.
+  targetDirection: THREE.Vector3;
+  hasReachedTarget: boolean;
   targetThreshold: number;
   targetPosition: THREE.Vector3;
 
-  targetDistance: number; // next distance from dolphin to target
-  turningSpeed: number; // how fast it can turn (0.5 - 2.0)
-  avoidanceDistance: number;
+  turningSpeed: number;
 
-  currentSpeed: number; // current movement speed (should match speed initially)
-  desiredSpeed: number; // Target speed (should match speed initially)
+  currentSpeed: number;
+  desiredSpeed: number;
+
+  // Add these for smoother rotation
+  targetRotationY: number; // Target Y rotation angle
+  currentRotationY: number; // Current Y rotation angle (smoothed)
 }
 
 interface IDolphinProps {
@@ -40,6 +41,7 @@ interface IDolphinProps {
 }
 
 useGLTF.preload(MODEL_PATH);
+
 const generateNewPosition = (dolphin: IDolphin): [number, number, number] => {
   const { position, direction } = dolphin;
 
@@ -66,23 +68,24 @@ const generateNewPosition = (dolphin: IDolphin): [number, number, number] => {
   // 6. Clamp within world bounds
   const clampedX = THREE.MathUtils.clamp(
     rawPosition.x,
-    -WORLD.width / 2,
-    WORLD.width / 2
+    -WORLD.x / 2,
+    WORLD.x / 2
   );
   const clampedY = THREE.MathUtils.clamp(
     rawPosition.y,
-    -WORLD.height * 0.2,
-    WORLD.height * 0.2
-  ); // optional Y limit
+    -WORLD.y * 0.2,
+    WORLD.y * 0.2
+  );
   const clampedZ = THREE.MathUtils.clamp(
     rawPosition.z,
-    -WORLD.height / 2,
-    WORLD.height / 2
+    -WORLD.z / 2,
+    WORLD.z / 2
   );
 
   return [clampedX, clampedY, clampedZ];
 };
 
+// Adds a small random variation to direction every few seconds to simuate swimming behavior
 const updateSwim = (dolphin: IDolphin, deltaTime: number): void => {
   dolphin.behaviorTimer += deltaTime;
   if (dolphin.behaviorTimer > 2 + Math.random() * 2) {
@@ -97,79 +100,69 @@ const updateSwim = (dolphin: IDolphin, deltaTime: number): void => {
 };
 
 const updateZigzag = (dolphin: IDolphin, deltaTime: number): void => {
-  // Wideness of the zigzag (amplitude in world units)
   const amplitude = 4;
-  const frequency = 0.1; // cycles per second
+  const frequency = 0.1;
 
-  // Create perpendicular vector (side direction)
   const sideVector = new THREE.Vector3().copy(dolphin.direction);
   sideVector
     .applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
     .normalize();
 
-  // Calculate side offset using sine wave
   const time = dolphin.behaviorTimer;
   const offsetAmount = Math.sin(time * frequency * Math.PI * 2) * amplitude;
 
-  // Calculate the desired direction by blending toward side offset
   const targetOffset = sideVector.multiplyScalar(offsetAmount);
-
-  // Smoothly nudge position sideways (not direction)
   dolphin.position.add(targetOffset.clone().multiplyScalar(deltaTime));
 
   dolphin.behaviorTimer += deltaTime;
 };
 
 const move = (dolphin: IDolphin, deltaTime: number): void => {
-  // Calculate distance to target - FIXED: Use targetPosition instead of targetDirection
   const distanceToTarget = dolphin.position.distanceTo(dolphin.targetPosition);
-  dolphin.targetDistance = distanceToTarget; // Update the distance property
 
   // Check if target is reached
   if (distanceToTarget <= dolphin.targetThreshold) {
     dolphin.hasReachedTarget = true;
 
-    // Generate next target - FIXED: Set targetPosition, not targetDirection
+    // Generate next target
     const [x, y, z] = generateNewPosition(dolphin);
     dolphin.targetPosition.set(x, y, z);
-
     dolphin.hasReachedTarget = false;
   }
 
-  // Calculate direction to target - FIXED: Direction calculation
+  // Calculate direction to target
   tempVectorMove.copy(dolphin.targetPosition).sub(dolphin.position).normalize();
 
-  // FIXED: Don't overwrite targetDirection here, use it as intended
-  // dolphin.targetDirection should represent the desired direction
+  // IMPROVED: Smoother steering with configurable turning speed
+  const maxTurnRate = dolphin.turningSpeed * deltaTime;
+  const steerForce = tempVectorMove.sub(dolphin.direction);
 
-  // Smooth steering towards target
-  const steerForce = tempVectorMove
-    .sub(dolphin.direction)
-    .multiplyScalar(dolphin.turningSpeed);
-  dolphin.direction.add(steerForce.multiplyScalar(deltaTime)).normalize();
+  // Limit the steering force to prevent sudden turns
+  if (steerForce.length() > maxTurnRate) {
+    steerForce.normalize().multiplyScalar(maxTurnRate);
+  }
 
-  // Speed management based on distance to target
+  dolphin.direction.add(steerForce).normalize();
+
+  // Speed management
   const slowdownDistance = 15.0;
   const speedupDistance = 30.0;
 
   if (distanceToTarget < slowdownDistance) {
-    // Slow down when approaching target
     dolphin.desiredSpeed =
       dolphin.speed * 0.3 +
       (distanceToTarget / slowdownDistance) * dolphin.speed * 0.7;
   } else if (distanceToTarget > speedupDistance) {
-    // Speed up when far from target
     dolphin.desiredSpeed = dolphin.speed * 1.2;
   } else {
-    // Normal speed
     dolphin.desiredSpeed = dolphin.speed;
   }
 
   // Smooth speed transitions
   const speedDiff = dolphin.desiredSpeed - dolphin.currentSpeed;
-  dolphin.currentSpeed += speedDiff * deltaTime * 2.0; // Acceleration factor
+  dolphin.currentSpeed += speedDiff * deltaTime * 2.0;
 
-  // Update position with current speed - FIXED: Use fresh vector
+  // Update position
   tempVectorMove
     .copy(dolphin.direction)
     .multiplyScalar(dolphin.currentSpeed * deltaTime);
@@ -178,23 +171,50 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
   // Update velocity
   dolphin.velocity.copy(dolphin.direction).multiplyScalar(dolphin.currentSpeed);
 
-  // Calculate realistic rotation
-  const angle = Math.atan2(dolphin.direction.x, dolphin.direction.z);
-  dolphin.rotation.y = angle;
-
-  // Banking turn effect - FIXED: Calculate turn rate properly
-  const previousAngle = dolphin.rotation.y;
+  // IMPROVED: Smooth rotation handling
+  // Calculate target rotation angle
   const targetAngle = Math.atan2(dolphin.direction.x, dolphin.direction.z);
 
-  dolphin.rotation.y = lerpAngle(previousAngle, targetAngle, deltaTime * 2);
+  // Initialize current rotation if not set
+  if (dolphin.currentRotationY === undefined) {
+    dolphin.currentRotationY = targetAngle;
+  }
 
-  const turnRate = Math.abs(deltaAngle(previousAngle, dolphin.rotation.y));
-  dolphin.rotation.z = Math.sin(turnRate * 10) * 0.3; // Amplify for visible effect
+  // Find the shortest angular path to target
+  let angleDiff = targetAngle - dolphin.currentRotationY;
 
-  // Pitch based on vertical movement and distance to target
+  // Normalize angle difference to [-π, π]
+  while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+  while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+
+  // Apply smooth rotation with speed control
+  const rotationSpeed = 3.0; // Adjust this value to control rotation speed
+  const maxRotationStep = rotationSpeed * deltaTime;
+
+  if (Math.abs(angleDiff) > maxRotationStep) {
+    // If angle difference is large, rotate at maximum speed
+    dolphin.currentRotationY += Math.sign(angleDiff) * maxRotationStep;
+  } else {
+    // If close to target, move directly to target
+    dolphin.currentRotationY = targetAngle;
+  }
+
+  // Normalize current rotation to [-π, π]
+  while (dolphin.currentRotationY > Math.PI)
+    dolphin.currentRotationY -= 2 * Math.PI;
+  while (dolphin.currentRotationY < -Math.PI)
+    dolphin.currentRotationY += 2 * Math.PI;
+
+  // Set the rotation
+  dolphin.rotation.y = dolphin.currentRotationY;
+
+  // Banking turn effect - based on rotation speed
+  const turnRate = Math.abs(angleDiff);
+  dolphin.rotation.z = Math.sin(turnRate * 5) * 0.2; // Reduced amplitude for more subtle effect
+
+  // Pitch based on vertical movement
   let pitchTarget = -dolphin.direction.y * 0.5;
   if (distanceToTarget < slowdownDistance) {
-    // Add gentle diving motion when approaching target
     pitchTarget += Math.sin(Date.now() * 0.002) * 0.1;
   }
   dolphin.rotation.x = THREE.MathUtils.lerp(
@@ -216,16 +236,26 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
     }
   }, [actions, animations]);
 
+  // Initialize rotation values if not set
+  React.useEffect(() => {
+    if (dolphin.currentRotationY === undefined) {
+      dolphin.currentRotationY = Math.atan2(
+        dolphin.direction.x,
+        dolphin.direction.z
+      );
+    }
+  }, [dolphin]);
+
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // move the dolphin to target position
+    // Move the dolphin
     move(dolphin, delta);
 
-    // update dolphin behavior
+    // Update dolphin behavior
     switch (dolphin.behavior) {
       case "swim":
-        updateSwim(dolphin, delta);
+        // updateSwim(dolphin, delta);
         break;
       case "zigzag":
         updateZigzag(dolphin, delta);
@@ -234,23 +264,24 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
         break;
     }
 
-    // FIXED: More responsive position updates
-    groupRef.current.position.lerp(dolphin.position, 0.2);
+    // IMPROVED: Even smoother visual updates with different lerp speeds
+    groupRef.current.position.lerp(dolphin.position, 0.3); // Slightly faster position updates
 
+    // Smoother rotation updates
     groupRef.current.rotation.x = THREE.MathUtils.lerp(
       groupRef.current.rotation.x,
       dolphin.rotation.x,
-      0.15
+      0.1 // Slower for pitch
     );
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
       groupRef.current.rotation.y,
       dolphin.rotation.y,
-      0.15
+      0.2 // Medium speed for yaw
     );
     groupRef.current.rotation.z = THREE.MathUtils.lerp(
       groupRef.current.rotation.z,
       dolphin.rotation.z,
-      0.15
+      0.15 // Slower for banking effect
     );
 
     targetRef.current?.position.copy(dolphin.targetPosition);
@@ -261,7 +292,7 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
       <ambientLight intensity={0.5} />
       <primitive ref={groupRef} object={scene} />
 
-      {/* Target position indicator - FIXED: Make it visible */}
+      {/* Target position indicator */}
       {dolphin.targetPosition && (
         <mesh ref={targetRef} position={dolphin.targetPosition}>
           <sphereGeometry args={[1.0, 16, 16]} />

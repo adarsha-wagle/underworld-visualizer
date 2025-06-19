@@ -92,9 +92,9 @@ const updateScavenger = (lobster: LobsterData, deltaTime: number): void => {
   // Update scavenging target periodically
   if (lobster.behaviorTimer > 4 + Math.random() * 6) {
     lobster.scavengeTarget.set(
-      (Math.random() - 0.5) * WORLD.width * 0.9,
-      -WORLD.height * 0.4 + Math.random() * 5, // Stay near bottom
-      (Math.random() - 0.5) * WORLD.length * 0.9
+      (Math.random() - 0.5) * WORLD.x * 0.9,
+      -WORLD.y * 0.4 + Math.random() * 5, // Stay near bottom
+      (Math.random() - 0.5) * WORLD.z * 0.9
     );
     lobster.behaviorTimer = 0;
     lobster.activityLevel = Math.min(lobster.activityLevel + 0.3, 1);
@@ -215,9 +215,9 @@ const updateWanderer = (lobster: LobsterData, deltaTime: number): void => {
 
 // Boundary wrapping with bottom preference
 const wrapPosition = (position: THREE.Vector3): void => {
-  const halfX = WORLD.width / 2;
-  const halfY = WORLD.height / 2;
-  const halfZ = WORLD.length / 2;
+  const halfX = WORLD.x / 2;
+  const halfY = WORLD.y / 2;
+  const halfZ = WORLD.z / 2;
 
   if (position.x > halfX) position.x = -halfX;
   else if (position.x < -halfX) position.x = halfX;
@@ -412,9 +412,9 @@ function SpawnLobsters(): React.JSX.Element {
   // Generate lobster data
   const lobsterData = useMemo(() => {
     const lobsterCount = 6; // More lobsters as they're smaller creatures
-    const halfBoundsX = WORLD.width * 0.4;
-    const halfBoundsY = WORLD.height * 0.3;
-    const halfBoundsZ = WORLD.length * 0.4;
+    const halfBoundsX = WORLD.x * 0.4;
+    const halfBoundsY = WORLD.y * 0.3;
+    const halfBoundsZ = WORLD.z * 0.4;
 
     return Array.from({ length: lobsterCount }, (_, i) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
@@ -439,14 +439,14 @@ function SpawnLobsters(): React.JSX.Element {
         scale: 0.8 + Math.random() * 0.6, // Varied lobster sizes
         // Initialize behavior-specific data
         scavengeTarget: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.8,
-          -WORLD.height * 0.4,
-          (Math.random() - 0.5) * WORLD.length * 0.8
+          (Math.random() - 0.5) * WORLD.x * 0.8,
+          -WORLD.y * 0.4,
+          (Math.random() - 0.5) * WORLD.z * 0.8
         ),
         territoryCenter: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.6,
+          (Math.random() - 0.5) * WORLD.x * 0.6,
           -halfBoundsY,
-          (Math.random() - 0.5) * WORLD.length * 0.6
+          (Math.random() - 0.5) * WORLD.z * 0.6
         ),
         territoryRadius: 15 + Math.random() * 15,
         burrowTimer: Math.random() * 10,

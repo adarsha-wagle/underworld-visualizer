@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { IAudioData } from "@/types/audio";
+import { isDevelopment } from "@/constants/env";
 
 interface IAudioVisualizerContext {
   audioData: IAudioData;
@@ -37,7 +38,7 @@ const DEFAULT_AUDIO_DATA: IAudioData = {
   mid: 0,
   treble: 0,
   overall: 0,
-  volume: 0.8,
+  volume: isDevelopment ? 0 : 0.8,
   frequencyData: new Uint8Array(0),
 };
 

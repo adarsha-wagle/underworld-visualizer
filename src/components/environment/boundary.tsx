@@ -28,8 +28,8 @@ function CausticsWall({
 
   return (
     <mesh position={position} rotation={rotation}>
-      {/* Vertical wall: width = WORLD.width or length, height = WORLD.height */}
-      <planeGeometry args={[WORLD.width, WORLD.height]} />
+      {/* Vertical wall: width = WORLD.x or length, height = WORLD.y */}
+      <planeGeometry args={[WORLD.x, WORLD.y]} />
       <shaderMaterial
         ref={materialRef}
         transparent
@@ -81,8 +81,8 @@ function CausticsWall({
 }
 
 export default function BoundaryCausticsWalls() {
-  const halfW = WORLD.width / 2;
-  const halfL = WORLD.length / 2;
+  const halfW = WORLD.x / 2;
+  const halfL = WORLD.z / 2;
 
   return (
     <>

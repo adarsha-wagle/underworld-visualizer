@@ -86,9 +86,9 @@ const updateHunter = (shark: SharkData, deltaTime: number): void => {
   // Update hunting target periodically
   if (shark.behaviorTimer > 3 + Math.random() * 4) {
     shark.huntingTarget.set(
-      (Math.random() - 0.5) * WORLD.width * 0.8,
-      (Math.random() - 0.5) * WORLD.height * 0.6,
-      (Math.random() - 0.5) * WORLD.length * 0.8
+      (Math.random() - 0.5) * WORLD.x * 0.8,
+      (Math.random() - 0.5) * WORLD.y * 0.6,
+      (Math.random() - 0.5) * WORLD.z * 0.8
     );
     shark.behaviorTimer = 0;
     shark.aggressionLevel = Math.min(shark.aggressionLevel + 0.2, 1);
@@ -203,9 +203,9 @@ const updateCruiser = (shark: SharkData, deltaTime: number): void => {
 
 // Optimized boundary wrapping
 const wrapPosition = (position: THREE.Vector3): void => {
-  const halfX = WORLD.width / 2;
-  const halfY = WORLD.height / 2;
-  const halfZ = WORLD.length / 2;
+  const halfX = WORLD.x / 2;
+  const halfY = WORLD.y / 2;
+  const halfZ = WORLD.z / 2;
 
   if (position.x > halfX) position.x = -halfX;
   else if (position.x < -halfX) position.x = halfX;

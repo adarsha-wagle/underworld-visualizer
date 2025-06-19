@@ -4,9 +4,9 @@ import { memo } from "react";
 
 // Utility to generate a random position on the ground level
 function randomGroundPosition(): [number, number, number] {
-  const x = Math.random() * WORLD.width - WORLD.width / 2;
-  const y = -WORLD.height / 2; // fixed to ground level
-  const z = Math.random() * WORLD.length - WORLD.length / 2;
+  const x = Math.random() * WORLD.x - WORLD.x / 2;
+  const y = -WORLD.y / 2; // fixed to ground level
+  const z = Math.random() * WORLD.z - WORLD.z / 2;
 
   return [x, y, z];
 }

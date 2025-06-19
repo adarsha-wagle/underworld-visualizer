@@ -12,7 +12,7 @@ const dolphinData: IDolphin = {
   velocity: new THREE.Vector3(0, 0, 0),
   direction: new THREE.Vector3(1, 0, 0).normalize(),
   rotation: new THREE.Euler(0, 0, 0),
-  speed: 3, // More realistic speed
+  speed: 9, // More realistic speed
   behaviorTimer: 0,
 
   targetDirection: new THREE.Vector3(1, 0, 0).normalize(),
@@ -22,16 +22,15 @@ const dolphinData: IDolphin = {
   targetPosition: new THREE.Vector3(0, 0, 20), // Will be initialized in move()
 
   turningSpeed: 1.0,
-  avoidanceDistance: 12,
   currentSpeed: 3,
   desiredSpeed: 3,
-  targetDistance: 40,
+  currentRotationY: 0,
+  targetRotationY: 0,
 };
 
 function SpawnDolphins() {
   return (
     <>
-      <Dolphin dolphin={dolphinData} />
       <Dolphin dolphin={dolphinData} />
     </>
   );

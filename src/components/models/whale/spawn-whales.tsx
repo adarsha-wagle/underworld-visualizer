@@ -17,15 +17,15 @@ function SpawnWhales(): JSX.Element {
   // Generate whale data
   const whaleData = useMemo(() => {
     const whaleCount = 3; // Fewer whales as they're large creatures
-    const halfBoundsX = WORLD.width * 0.3;
-    const halfBoundsY = WORLD.height * 0.3;
-    const halfBoundsZ = WORLD.length * 0.3;
+    const halfBoundsX = WORLD.x * 0.3;
+    const halfBoundsY = WORLD.y * 0.3;
+    const halfBoundsZ = WORLD.z * 0.3;
 
     // Create a pod center for pod followers
     const podCenter = new THREE.Vector3(
-      (Math.random() - 0.5) * WORLD.width * 0.4,
-      (Math.random() - 0.5) * WORLD.height * 0.2,
-      (Math.random() - 0.5) * WORLD.length * 0.4
+      (Math.random() - 0.5) * WORLD.x * 0.4,
+      (Math.random() - 0.5) * WORLD.y * 0.2,
+      (Math.random() - 0.5) * WORLD.z * 0.4
     );
 
     return Array.from({ length: whaleCount }, (_, i) => {

@@ -1,3 +1,4 @@
+import { isDevelopment } from "@/constants/env";
 import { createContext, useContext, useReducer } from "react";
 
 interface ISettingState {
@@ -58,9 +59,9 @@ export const SettingsProvider = ({
   children: React.ReactNode;
 }) => {
   const [state, dispatch] = useReducer(settingReducer, {
-    isNoiseEnabled: false,
-    isVignetteEnabled: false,
-    isBloomEnabled: false,
+    isNoiseEnabled: isDevelopment ? false : true,
+    isVignetteEnabled: isDevelopment ? false : true,
+    isBloomEnabled: isDevelopment ? false : true,
     chromaticAberration: 0.001,
   });
   return (

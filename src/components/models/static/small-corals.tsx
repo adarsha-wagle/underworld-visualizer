@@ -11,9 +11,9 @@ function SmallCorals({ count = 40 }: IRedSmallCoralsProps) {
     const items = [];
 
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * WORLD.width;
-      const z = (Math.random() - 0.5) * WORLD.length;
-      const y = -WORLD.height + Math.random() * 2;
+      const x = (Math.random() - 0.5) * WORLD.x;
+      const z = (Math.random() - 0.5) * WORLD.z;
+      const y = -WORLD.y + Math.random() * 2;
 
       items.push({ position: [x, y, z] as [number, number, number] });
     }

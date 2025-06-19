@@ -9,7 +9,7 @@ interface IUnderwaterCausticsProps {
 }
 
 function UnderwaterCaustics({
-  position = [0, WORLD.height, 0],
+  position = [0, WORLD.y, 0],
   intensity = 0.8,
 }: IUnderwaterCausticsProps) {
   const causticsRef = useRef<THREE.Mesh>(null!);
@@ -84,7 +84,7 @@ function UnderwaterCaustics({
 
   return (
     <mesh ref={causticsRef} position={position} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[WORLD.width, WORLD.length]} />
+      <planeGeometry args={[WORLD.x, WORLD.z]} />
       <shaderMaterial
         ref={materialRef}
         vertexShader={causticsVertexShader}

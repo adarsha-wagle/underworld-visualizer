@@ -11,9 +11,9 @@ function SeaCorals({ count = 4 }: IRedCoralsProps) {
     const items = [];
 
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * WORLD.width;
-      const z = (Math.random() - 0.5) * WORLD.length;
-      const y = -WORLD.height;
+      const x = (Math.random() - 0.5) * WORLD.x;
+      const z = (Math.random() - 0.5) * WORLD.z;
+      const y = -WORLD.y;
 
       items.push({ position: [x, y, z] as [number, number, number] });
     }

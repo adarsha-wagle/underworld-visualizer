@@ -22,9 +22,9 @@ function Corals({ count = 10 }: CoralsProps) {
     const formations = [];
 
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * WORLD.width;
-      const z = (Math.random() - 0.5) * WORLD.length;
-      const y = -WORLD.height / 2 + Math.random() * 2; // near seafloor
+      const x = (Math.random() - 0.5) * WORLD.x;
+      const z = (Math.random() - 0.5) * WORLD.z;
+      const y = -WORLD.y / 2 + Math.random() * 2; // near seafloor
       const color = coralColors[Math.floor(Math.random() * coralColors.length)];
       const scale = 0.8 + Math.random() * 0.8; // between 0.8 and 1.6
 

@@ -16,9 +16,9 @@ function SpawnSharks(): JSX.Element {
   // Generate shark data
   const sharkData = useMemo(() => {
     const sharkCount = 3; // Few sharks as they're apex predators
-    const halfBoundsX = WORLD.width * 0.4;
-    const halfBoundsY = WORLD.height * 0.4;
-    const halfBoundsZ = WORLD.length * 0.4;
+    const halfBoundsX = WORLD.x * 0.4;
+    const halfBoundsY = WORLD.y * 0.4;
+    const halfBoundsZ = WORLD.z * 0.4;
 
     return Array.from({ length: sharkCount }, (_, i) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
@@ -43,15 +43,15 @@ function SpawnSharks(): JSX.Element {
         scale: 0.9 + Math.random() * 0.4, // Varied shark sizes
         // Initialize behavior-specific data
         huntingTarget: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.6,
-          (Math.random() - 0.5) * WORLD.height * 0.4,
-          (Math.random() - 0.5) * WORLD.length * 0.6
+          (Math.random() - 0.5) * WORLD.x * 0.6,
+          (Math.random() - 0.5) * WORLD.y * 0.4,
+          (Math.random() - 0.5) * WORLD.z * 0.6
         ),
         patrolRadius: 30 + Math.random() * 25,
         patrolCenter: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.width * 0.5,
-          (Math.random() - 0.5) * WORLD.height * 0.3,
-          (Math.random() - 0.5) * WORLD.length * 0.5
+          (Math.random() - 0.5) * WORLD.x * 0.5,
+          (Math.random() - 0.5) * WORLD.y * 0.3,
+          (Math.random() - 0.5) * WORLD.z * 0.5
         ),
         ambushTimer: Math.random() * 8,
         isAmbushing: false,

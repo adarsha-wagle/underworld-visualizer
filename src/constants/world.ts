@@ -1,11 +1,11 @@
 type TWorld = {
-  width: number;
-  length: number;
-  height: number;
+  x: number;
+  y: number;
+  z: number;
 };
 
 export const WORLD: TWorld = {
-  width: 200,
-  length: 200,
-  height: 30,
+  x: 200,
+  z: 200,
+  y: 30,
 };
