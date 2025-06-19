@@ -123,7 +123,6 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
   // Check if target is reached
   if (distanceToTarget <= dolphin.targetThreshold) {
     dolphin.hasReachedTarget = true;
-
     // Generate next target
     const [x, y, z] = generateNewPosition(dolphin);
     dolphin.targetPosition.set(x, y, z);
@@ -171,7 +170,6 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
   // Update velocity
   dolphin.velocity.copy(dolphin.direction).multiplyScalar(dolphin.currentSpeed);
 
-  // IMPROVED: Smooth rotation handling
   // Calculate target rotation angle
   const targetAngle = Math.atan2(dolphin.direction.x, dolphin.direction.z);
 
@@ -194,16 +192,13 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
   if (Math.abs(angleDiff) > maxRotationStep) {
     // If angle difference is large, rotate at maximum speed
     dolphin.currentRotationY += Math.sign(angleDiff) * maxRotationStep;
-  } else {
-    // If close to target, move directly to target
-    dolphin.currentRotationY = targetAngle;
   }
 
   // Normalize current rotation to [-π, π]
-  while (dolphin.currentRotationY > Math.PI)
-    dolphin.currentRotationY -= 2 * Math.PI;
-  while (dolphin.currentRotationY < -Math.PI)
-    dolphin.currentRotationY += 2 * Math.PI;
+  // while (dolphin.currentRotationY > Math.PI)
+  //   dolphin.currentRotationY -= 2 * Math.PI;
+  // while (dolphin.currentRotationY < -Math.PI)
+  //   dolphin.currentRotationY += 2 * Math.PI;
 
   // Set the rotation
   dolphin.rotation.y = dolphin.currentRotationY;
@@ -255,7 +250,7 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
     // Update dolphin behavior
     switch (dolphin.behavior) {
       case "swim":
-        // updateSwim(dolphin, delta);
+        updateSwim(dolphin, delta);
         break;
       case "zigzag":
         updateZigzag(dolphin, delta);
