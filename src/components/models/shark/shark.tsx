@@ -4,14 +4,9 @@ import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
 import { useRef, useMemo, type JSX } from "react";
 
-const MODEL_PATH = "/models/shark.glb";
+import { WORLD } from "@/constants/world";
 
-// World boundaries (medium size for sharks)
-const WORLD = {
-  width: 300,
-  height: 50,
-  length: 300,
-};
+const MODEL_PATH = "/models/shark.glb";
 
 // Pre-allocated objects for performance
 const tempVector = new THREE.Vector3();

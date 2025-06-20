@@ -4,14 +4,9 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { type GLTF } from "three-stdlib";
 
-const MODEL_PATH = "/models/lobster.glb";
+import { WORLD } from "@/constants/world";
 
-// World boundaries (smaller for lobsters - bottom dwellers)
-const WORLD = {
-  width: 200,
-  height: 30,
-  length: 200,
-};
+const MODEL_PATH = "/models/lobster.glb";
 
 // Pre-allocated objects for performance
 const tempVector = new THREE.Vector3();

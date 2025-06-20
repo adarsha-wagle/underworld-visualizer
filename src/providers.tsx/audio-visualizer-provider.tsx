@@ -38,7 +38,7 @@ const DEFAULT_AUDIO_DATA: IAudioData = {
   mid: 0,
   treble: 0,
   overall: 0,
-  volume: isDevelopment ? 0 : 0.8,
+  volume: 0.8,
   frequencyData: new Uint8Array(0),
 };
 
@@ -174,7 +174,7 @@ export const AudioVisualizerProvider = ({
         const audio = new Audio();
         audio.crossOrigin = "anonymous";
         audio.loop = !file; // Loop default audio, not custom files
-        audio.volume = volume; // Apply current volume setting
+        audio.volume = isDevelopment ? 0 : volume; // Apply current volume setting
 
         // Set source
         if (file) {

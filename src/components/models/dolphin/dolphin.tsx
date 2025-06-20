@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGLTF, useAnimations, Clone } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { WORLD } from "@/constants/world";
@@ -285,7 +285,9 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
   return (
     <>
       <ambientLight intensity={0.5} />
-      <primitive ref={groupRef} object={scene} />
+      {/* <primitive ref={groupRef} object={scene} /> */}
+
+      <Clone object={scene} ref={groupRef} />
 
       {/* Target position indicator */}
       {dolphin.targetPosition && (
