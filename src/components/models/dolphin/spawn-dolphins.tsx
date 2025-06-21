@@ -59,8 +59,9 @@ function SpawnDolphins() {
 
   return (
     <>
-      <Dolphin dolphin={dolphins[0]} />
-      <Dolphin dolphin={dolphins[1]} />
+      {dolphins.map((dolphin) => (
+        <Dolphin key={dolphin.id} dolphin={dolphin} />
+      ))}
     </>
   );
 }

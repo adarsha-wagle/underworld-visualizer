@@ -221,7 +221,6 @@ const move = (dolphin: IDolphin, deltaTime: number): void => {
 
 export default function Dolphin({ dolphin }: IDolphinProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const targetRef = useRef<THREE.Mesh>(null);
   const { scene, animations } = useGLTF(MODEL_PATH);
   const { actions } = useAnimations(animations, groupRef);
 
@@ -278,30 +277,12 @@ export default function Dolphin({ dolphin }: IDolphinProps) {
       dolphin.rotation.z,
       0.15 // Slower for banking effect
     );
-
-    targetRef.current?.position.copy(dolphin.targetPosition);
   });
 
   return (
     <>
       <ambientLight intensity={0.5} />
-      {/* <primitive ref={groupRef} object={scene} /> */}
-
       <Clone object={scene} ref={groupRef} />
-
-      {/* Target position indicator */}
-      {dolphin.targetPosition && (
-        <mesh ref={targetRef} position={dolphin.targetPosition}>
-          <sphereGeometry args={[1.0, 16, 16]} />
-          <meshBasicMaterial color="red" />
-        </mesh>
-      )}
-      {dolphin.position && (
-        <mesh position={dolphin.position}>
-          <sphereGeometry args={[1.0, 16, 16]} />
-          <meshBasicMaterial color="blue" />
-        </mesh>
-      )}
     </>
   );
 }
