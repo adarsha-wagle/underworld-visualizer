@@ -8,9 +8,9 @@ import Shark from "./shark";
 function SpawnSharks(): JSX.Element {
   const behaviors: TSharkBehavior[] = [
     "hunter",
-    "patroller",
+    // "patroller",
     "ambusher",
-    "cruiser",
+    // "cruiser",
   ];
 
   // Generate shark data

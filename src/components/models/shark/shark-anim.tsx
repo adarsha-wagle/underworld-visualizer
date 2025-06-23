@@ -9,11 +9,14 @@ const MODEL_PATH = "/models/shark-anim.glb";
 
 const tempVectorSwim = new THREE.Vector3();
 
-export type TSharkBehavior = "swim" | "wanderer" | "zigzag";
+export type TSharkBehavior = "swim" | "wanderer" | "zigzag" | "stopAndMove";
 
 export interface IShark extends IDynamicModel {
   behavior: TSharkBehavior;
   speed: number;
+
+  isMoving?: boolean;
+  originalSpeed?: number;
 }
 
 interface ISharkProps {
@@ -54,7 +57,40 @@ const updateZigzag = (shark: IShark, deltaTime: number): void => {
   shark.behaviorTimer += deltaTime;
 };
 
-const wanderer = (shark: IShark, deltaTime: number): void => {};
+const updateStopAndMove = (shark: IShark, deltaTime: number): void => {
+  // Initialize properties if not set
+  if (shark.isMoving === undefined) {
+    shark.isMoving = true;
+    shark.originalSpeed = shark.speed;
+  }
+
+  shark.behaviorTimer += deltaTime;
+
+  // Change between moving and stopping every 2-4 seconds
+  const switchInterval = 2 + Math.random() * 2;
+
+  if (shark.behaviorTimer > switchInterval) {
+    shark.isMoving = !shark.isMoving;
+    shark.behaviorTimer = 0;
+
+    // Set speed based on current state
+    if (shark.isMoving) {
+      shark.speed = shark.originalSpeed || 1;
+    } else {
+      shark.speed = 0;
+    }
+  }
+
+  // Add slight directional variation when moving (like natural swimming)
+  if (shark.isMoving && shark.behaviorTimer > 0.5) {
+    const variation = tempVectorSwim.set(
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.05,
+      (Math.random() - 0.5) * 0.1
+    );
+    shark.direction.add(variation.multiplyScalar(0.05)).normalize();
+  }
+};
 
 export default function Shark({ shark }: ISharkProps) {
   const groupRef = useRef<THREE.Group>(null);
@@ -89,6 +125,9 @@ export default function Shark({ shark }: ISharkProps) {
         break;
       case "zigzag":
         updateZigzag(shark, delta);
+        break;
+      case "stopAndMove":
+        updateStopAndMove(shark, delta);
         break;
       default:
         break;

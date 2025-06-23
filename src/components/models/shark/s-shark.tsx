@@ -7,7 +7,7 @@ const sharkCount = 10;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 
-const behaviors: TSharkBehavior[] = ["swim"];
+const behaviors: TSharkBehavior[] = ["stopAndMove"];
 
 function SpawnSharksAnim() {
   const sharks: IShark[] = useMemo(() => {
