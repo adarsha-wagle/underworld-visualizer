@@ -1,23 +1,23 @@
 import * as THREE from "three";
-import Shark, { type IShark, type TSharkBehavior } from "./shark-anim";
+import Mantaray, { type IMantaRay, type TMantaRayBehavior } from "./manta-ray";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const sharkCount = 10;
+const mantraMantarayCount = 10;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 
-const behaviors: TSharkBehavior[] = ["swim", "zigzag", "stopAndMove"];
+const behaviors: TMantaRayBehavior[] = ["swim"];
 
-function SpawnSharksAnim() {
-  const sharks: IShark[] = useMemo(() => {
-    return Array.from({ length: sharkCount }, (_, index) => {
+function SpawnMantarays() {
+  const mantarays: IMantaRay[] = useMemo(() => {
+    return Array.from({ length: mantraMantarayCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
 
-      // Create unique Vector3 and Euler instances for each shark
+      // Create unique Vector3 and Euler instances for each mantraMantaray
       const position = new THREE.Vector3(
         (Math.random() - 0.5) * halfBoundX * 1.5,
-        -10 + (Math.random() - 0.5) * 20, // Keep sharks underwater
+        -10 + (Math.random() - 0.5) * 20, // Keep mantarays underwater
         (Math.random() - 0.5) * halfBoundZ * 1.5
       );
 
@@ -27,7 +27,7 @@ function SpawnSharksAnim() {
         (Math.random() - 0.5) * 2
       ).normalize();
 
-      // Generate initial target position for each shark
+      // Generate initial target position for each mantraMantaray
       const targetX = (Math.random() - 0.5) * halfBoundX * 1.5;
       const targetY = -10 + (Math.random() - 0.5) * 20; // Keep targets underwater
       const targetZ = (Math.random() - 0.5) * halfBoundZ * 1.5;
@@ -58,11 +58,11 @@ function SpawnSharksAnim() {
 
   return (
     <>
-      {sharks.map((shark) => (
-        <Shark key={shark.id} shark={shark} />
+      {mantarays.map((mantaray) => (
+        <Mantaray key={mantaray.id} mantaray={mantaray} />
       ))}
     </>
   );
 }
 
-export default SpawnSharksAnim;
+export default SpawnMantarays;

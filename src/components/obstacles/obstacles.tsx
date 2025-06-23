@@ -12,6 +12,8 @@ import SpawnSharks from "../models/shark/spawn-sharks";
 import SpawnLobsters from "../models/lobster/spawn-lobsters";
 import SpawnDolphins from "../models/dolphin/spawn-dolphins";
 import SpawnSharksAnim from "../models/shark/s-shark";
+import SpawnSeahorseAnim from "../models/sea-horse/spawn-seahorse-anim";
+import SpawnMantarays from "../models/manta-ray/spawn-manta-rays";
 // import SpawnAnglerFish from "../models/angler-fish/spawn-angler-fish";
 
 function Obstacles() {
@@ -30,8 +32,10 @@ function Obstacles() {
       <SpawnLobsters />
       <SpawnDolphins /> */}
       {/* <SpawnAnglerFish /> */}
-      <SpawnSharks />
+      {/* <SpawnSharks /> */}
       <SpawnSharksAnim />
+      <SpawnSeahorseAnim />
+      <SpawnMantarays />
     </>
   );
 }
