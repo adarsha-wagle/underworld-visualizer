@@ -159,7 +159,6 @@ export default function Seahorse({ seahorse }: ISeahorseProps) {
 
   return (
     <>
-      <ambientLight intensity={0.2} />
       <Clone object={scene} ref={groupRef} />
     </>
   );

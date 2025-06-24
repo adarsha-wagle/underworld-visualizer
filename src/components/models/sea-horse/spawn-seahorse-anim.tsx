@@ -42,7 +42,7 @@ function SpawnSeahorseAnim() {
         velocity: new THREE.Vector3(0, 0, 0),
         direction: direction,
         rotation: new THREE.Euler(0, 0, 0),
-        speed: 6 + Math.random() * 3, // Increase speed range
+        speed: 0.75 + Math.random() * 3, // Increase speed range
         behaviorTimer: Math.random() * 2, // Randomize initial timer
 
         targetDirection: direction.clone(),
