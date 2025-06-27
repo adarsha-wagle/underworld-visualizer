@@ -1,8 +1,5 @@
 import * as THREE from "three";
-import Seahorse, {
-  type ISeahorse,
-  type TSeahorseBehavior,
-} from "./seahorse-anim";
+import Seahorse, { type ISeahorse, type TSeahorseBehavior } from "./seahorse";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
@@ -10,9 +7,9 @@ const seahorseSeahorseCount = 10;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 
-const behaviors: TSeahorseBehavior[] = ["swim", "zigzag", "stopAndMove"];
+const behaviors: TSeahorseBehavior[] = ["swim", "stopAndMove"];
 
-function SpawnSeahorseAnim() {
+function SpawnSeahorses() {
   const seahorses: ISeahorse[] = useMemo(() => {
     return Array.from({ length: seahorseSeahorseCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
@@ -55,6 +52,7 @@ function SpawnSeahorseAnim() {
         desiredSpeed: 3 + Math.random() * 2,
         currentRotationY: Math.atan2(direction.x, direction.z),
         targetRotationY: 0,
+        stopAndMoveTimer: 5 + Math.floor(Math.random() * 10),
       };
     });
   }, []);
@@ -68,4 +66,4 @@ function SpawnSeahorseAnim() {
   );
 }
 
-export default SpawnSeahorseAnim;
+export default SpawnSeahorses;

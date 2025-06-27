@@ -100,7 +100,6 @@ export default function Mantaray({ mantaray }: IMantaRayProps) {
 
   return (
     <>
-      <ambientLight intensity={0.4} />
       <Clone object={scene} ref={groupRef} />
     </>
   );
