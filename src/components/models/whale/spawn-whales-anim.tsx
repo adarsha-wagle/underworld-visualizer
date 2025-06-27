@@ -1,25 +1,25 @@
 import * as THREE from "three";
-import Seahorse, { type ISeahorse, type TSeahorseBehavior } from "./seahorse";
+import Whale, { type IWhale, type TWhaleBehavior } from "./whale-anim";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const seahorseCount = 10;
+const whaleCount = 10;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 const halfBoundY = WORLD.y;
 
-const behaviors: TSeahorseBehavior[] = ["swim", "stopAndMove"];
+const behaviors: TWhaleBehavior[] = ["swim", "stopAndMove"];
 
-function SpawnSeahorses() {
-  const seahorses: ISeahorse[] = useMemo(() => {
-    return Array.from({ length: seahorseCount }, (_, index) => {
+function SpawnWhalesAnim() {
+  const whales: IWhale[] = useMemo(() => {
+    return Array.from({ length: whaleCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
 
       const xRandom = Math.random() - Math.random();
       const zRandom = Math.random() - Math.random();
       const yRandom = Math.random() - Math.random();
 
-      // Create unique Vector3 and Euler instances for each seahorseSeahorse
+      // Create unique Vector3 and Euler instances for each whaleWhale
       const position = new THREE.Vector3(
         xRandom * halfBoundX,
         yRandom * halfBoundY,
@@ -32,7 +32,7 @@ function SpawnSeahorses() {
         (Math.random() - 0.5) * 2
       ).normalize();
 
-      // Generate initial target position for each seahorseSeahorse
+      // Generate initial target position for each whaleWhale
       const targetX = (Math.random() - 0.5) * halfBoundX * 1.5;
       const targetY = -10 + (Math.random() - 0.5) * 20; // Keep targets underwater
       const targetZ = (Math.random() - 0.5) * halfBoundZ * 1.5;
@@ -66,11 +66,11 @@ function SpawnSeahorses() {
 
   return (
     <>
-      {seahorses.map((seahorse) => (
-        <Seahorse key={seahorse.id} seahorse={seahorse} />
+      {whales.map((whale) => (
+        <Whale key={whale.id} whale={whale} />
       ))}
     </>
   );
 }
 
-export default SpawnSeahorses;
+export default SpawnWhalesAnim;

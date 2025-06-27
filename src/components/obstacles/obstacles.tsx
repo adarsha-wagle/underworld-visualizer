@@ -15,6 +15,7 @@ import SpawnSharksAnim from "../models/shark/s-shark";
 import SpawnSeahorses from "../models/sea-horse/spawn-seahorses";
 import SpawnMantarays from "../models/manta-ray/spawn-manta-rays";
 import Ship from "../models/static/ship";
+import SpawnWhalesAnim from "../models/whale/spawn-whales-anim";
 // import SpawnAnglerFish from "../models/angler-fish/spawn-angler-fish";
 
 function Obstacles() {
@@ -29,15 +30,16 @@ function Obstacles() {
       <SeaCorals />
       <SmallCorals />
       <SpawnGoldFish />
-      <SpawnWhales /> 
       <SpawnLobsters />
       <SpawnDolphins /> */}
       {/* <SpawnAnglerFish /> */}
       {/* <SpawnSharks /> */}
       {/* <SpawnSeaHorses /> */}
-      <SpawnSharksAnim />
-      <SpawnSeahorses />
-      <SpawnMantarays />
+      {/* <SpawnSharksAnim /> */}
+      {/* <SpawnSeahorses /> */}
+      {/* <SpawnMantarays /> */}
+      <SpawnWhales />
+      <SpawnWhalesAnim />
     </>
   );
 }
