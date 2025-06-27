@@ -2,11 +2,11 @@ import { WORLD } from "@/constants/world";
 import { useMemo, memo } from "react";
 import RedCoral from "./red-coral";
 
-interface IRedCoralsProps {
+interface ISpawnRedCoralsProps {
   count?: number;
 }
 
-function RedCorals({ count = 10 }: IRedCoralsProps) {
+function SpawnRedCorals({ count = 10 }: ISpawnRedCoralsProps) {
   const redCorals = useMemo(() => {
     const strands = [];
 
@@ -30,4 +30,4 @@ function RedCorals({ count = 10 }: IRedCoralsProps) {
   );
 }
 
-export default memo(RedCorals);
+export default memo(SpawnRedCorals);

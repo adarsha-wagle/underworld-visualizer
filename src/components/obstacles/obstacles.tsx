@@ -1,10 +1,10 @@
 import Bubbles from "../bubbles/bubbles";
 import Corals from "../corals/corals";
 import KelpForest from "../kelp-forest/kelp-forest";
-import AnemoneCorals from "../models/static/anemone-corals";
-import SmallCorals from "../models/static/small-corals";
-import RedCorals from "../models/static/red-corals";
-import SeaCorals from "../models/static/sea-corals";
+import SpawnAnemoneCorals from "../models/static/spawn-anemone-corals";
+import SpawnSmallCorals from "../models/static/spawn-small-corals";
+import SpawnRedCorals from "../models/static/spawn-red-corals";
+import SpawnSeaCorals from "../models/static/spawn-sea-corals";
 import SpawnGoldFish from "../models/gold-fish/spawn-goldfish";
 // import SpawnSeaHorses from "../models/sea-horse/spawn-seahorse";
 import SpawnWhales from "../models/whale/spawn-whales";
@@ -25,10 +25,10 @@ function Obstacles() {
       {/* <KelpForest />
       <Corals />
       <Bubbles />
-      <RedCorals />
-      <AnemoneCorals />
-      <SeaCorals />
-      <SmallCorals />
+      <SpawnRedCorals />
+      <SpawnAnemoneCorals />
+      <SpawnSeaCorals />
+      <SpawnSmallCorals />
       <SpawnGoldFish />
       <SpawnLobsters />
       <SpawnDolphins /> */}

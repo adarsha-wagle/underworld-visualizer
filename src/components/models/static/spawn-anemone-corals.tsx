@@ -6,7 +6,7 @@ interface IRedCoralsProps {
   count?: number;
 }
 
-function AnemoneCorals({ count = 30 }: IRedCoralsProps) {
+function SpawnAnemoneCorals({ count = 30 }: IRedCoralsProps) {
   const anemoneCorals = useMemo(() => {
     const strands = [];
 
@@ -30,4 +30,4 @@ function AnemoneCorals({ count = 30 }: IRedCoralsProps) {
   );
 }
 
-export default memo(AnemoneCorals);
+export default memo(SpawnAnemoneCorals);

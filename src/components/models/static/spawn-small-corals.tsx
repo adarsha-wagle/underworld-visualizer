@@ -1,19 +1,19 @@
 import { WORLD } from "@/constants/world";
 import { memo, useMemo } from "react";
-import SeaCoral from "./sea-coral";
+import SmallCoral from "./small-coral";
 
-interface IRedCoralsProps {
+interface IRedSpawnSmallCoralsProps {
   count?: number;
 }
 
-function SeaCorals({ count = 4 }: IRedCoralsProps) {
-  const seaCorals = useMemo(() => {
+function SpawnSmallCorals({ count = 40 }: IRedSpawnSmallCoralsProps) {
+  const smallCorals = useMemo(() => {
     const items = [];
 
     for (let i = 0; i < count; i++) {
       const x = (Math.random() - 0.5) * WORLD.x;
       const z = (Math.random() - 0.5) * WORLD.z;
-      const y = -WORLD.y;
+      const y = -WORLD.y + Math.random() * 2;
 
       items.push({ position: [x, y, z] as [number, number, number] });
     }
@@ -23,11 +23,11 @@ function SeaCorals({ count = 4 }: IRedCoralsProps) {
 
   return (
     <>
-      {seaCorals.map((coral, index) => (
-        <SeaCoral key={index} position={coral.position} />
+      {smallCorals.map((smallCoral, index) => (
+        <SmallCoral key={index} position={smallCoral.position} />
       ))}
     </>
   );
 }
 
-export default memo(SeaCorals);
+export default memo(SpawnSmallCorals);
