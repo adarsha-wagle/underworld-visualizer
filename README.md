@@ -70,3 +70,7 @@ npx shadcn@latest add dialog
 <!-- Fix Rotation -->
 
 1. Fix fish rotation
+
+<!-- DONE -->
+
+1. fixed seahorse animation and movement

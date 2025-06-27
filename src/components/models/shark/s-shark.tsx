@@ -16,9 +16,9 @@ function SpawnSharksAnim() {
 
       // Create unique Vector3 and Euler instances for each shark
       const position = new THREE.Vector3(
-        (Math.random() - 0.5) * halfBoundX * 1.5,
+        Math.random() * halfBoundX * (1 + Math.random()),
         -10 + (Math.random() - 0.5) * 20, // Keep sharks underwater
-        (Math.random() - 0.5) * halfBoundZ * 1.5
+        Math.random() * halfBoundZ * (1 + Math.random())
       );
 
       const direction = new THREE.Vector3(

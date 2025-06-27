@@ -14,11 +14,13 @@ import SpawnDolphins from "../models/dolphin/spawn-dolphins";
 import SpawnSharksAnim from "../models/shark/s-shark";
 import SpawnSeahorses from "../models/sea-horse/spawn-seahorses";
 import SpawnMantarays from "../models/manta-ray/spawn-manta-rays";
+import Ship from "../models/static/ship";
 // import SpawnAnglerFish from "../models/angler-fish/spawn-angler-fish";
 
 function Obstacles() {
   return (
     <>
+      <Ship />
       {/* <KelpForest />
       <Corals />
       <Bubbles />
