@@ -1,20 +1,17 @@
 import * as THREE from "three";
-import Goldfish, {
-  type IGoldfishAnim,
-  type TGoldfishBehavior,
-} from "./gold-fish-anim";
+import Goldfish, { type IGoldfish, type TGoldfishBehavior } from "./gold-fish";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const seahorseCount = 10;
+const seahorseCount = 15;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 const halfBoundY = WORLD.y;
 
-const behaviors: TGoldfishBehavior[] = ["swim", "stopAndMove"];
+const behaviors: TGoldfishBehavior[] = ["swim", "stopAndMove", "zigzag"];
 
-function SpawnGoldfishAnim() {
-  const goldfishes: IGoldfishAnim[] = useMemo(() => {
+function SpawnGoldfishes() {
+  const goldfishes: IGoldfish[] = useMemo(() => {
     return Array.from({ length: seahorseCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
 
@@ -49,7 +46,7 @@ function SpawnGoldfishAnim() {
         velocity: new THREE.Vector3(0, 0, 0),
         direction: direction,
         rotation: new THREE.Euler(0, 0, 0),
-        speed: 0.75 + Math.random() * 3, // Increase speed range
+        speed: 1 + Math.random() * 3, // Increase speed range
         behaviorTimer: Math.random() * 2, // Randomize initial timer
 
         targetDirection: direction.clone(),
@@ -76,4 +73,4 @@ function SpawnGoldfishAnim() {
   );
 }
 
-export default SpawnGoldfishAnim;
+export default SpawnGoldfishes;
