@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import type { IDynamicModel } from "../common/types";
 import useModelAi from "../common/use-model-ai";
 
-const MODEL_PATH = "/models/gold-fish-anim.glb";
+const MODEL_PATH = "/models/goldfish-anim.glb";
 
 const tempVectorSwim = new THREE.Vector3();
 
@@ -95,7 +95,12 @@ export default function Goldfish({ goldfish }: GoldfishAnimProps) {
 
   React.useEffect(() => {
     if (actions && animations.length > 0) {
-      actions[animations[0].name]?.reset().play();
+      animations.forEach((clip) => {
+        const action = actions[clip.name];
+        if (action) {
+          action.reset().play();
+        }
+      });
     }
   }, [actions, animations]);
 

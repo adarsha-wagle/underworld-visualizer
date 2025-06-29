@@ -38,9 +38,9 @@ function Obstacles() {
       {/* <SpawnSharksAnim /> */}
       {/* <SpawnSeahorses /> */}
       {/* <SpawnMantarays /> */}
-      {/* <SpawnGoldFish /> */}
       {/* <SpawnWhales /> */}
       {/* <SpawnWhalesAnim /> */}
+      {/* <SpawnGoldFish /> */}
       <SpawnGoldfishAnim />
     </>
   );
