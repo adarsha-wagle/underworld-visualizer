@@ -29,7 +29,6 @@ function Obstacles() {
       <SpawnAnemoneCorals />
       <SpawnSeaCorals />      a
       <SpawnSmallCorals />
-      <SpawnLobsters />
       <SpawnDolphins /> */}
       {/* <SpawnAnglerFish /> */}
       {/* <SpawnSharks /> */}
@@ -40,6 +39,7 @@ function Obstacles() {
       {/* <SpawnWhales /> */}
       {/* <SpawnWhalesAnim /> */}
       {/* <SpawnGoldFish /> */}
+      <SpawnLobsters />
       <SpawnGoldfishAnim />
     </>
   );
