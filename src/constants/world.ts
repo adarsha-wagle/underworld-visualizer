@@ -7,5 +7,5 @@ type TWorld = {
 export const WORLD: TWorld = {
   x: 200,
   z: 200,
-  y: 30,
+  y: 69,
 };

@@ -6,14 +6,20 @@ interface IRedCoralsProps {
   count?: number;
 }
 
+const halfBoundX = WORLD.x / 2;
+const halfBoundZ = WORLD.z / 2;
+const halfBoundY = WORLD.y / 2;
+
 function SpawnSeaCorals({ count = 4 }: IRedCoralsProps) {
   const seaCorals = useMemo(() => {
     const items = [];
 
     for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * WORLD.x;
-      const z = (Math.random() - 0.5) * WORLD.z;
-      const y = -WORLD.y;
+      const randX = Math.random() - Math.random();
+      const randZ = Math.random() - Math.random();
+      const x = randX * halfBoundX;
+      const z = randZ * halfBoundZ;
+      const y = -halfBoundY + Math.random() * 2;
 
       items.push({ position: [x, y, z] as [number, number, number] });
     }
