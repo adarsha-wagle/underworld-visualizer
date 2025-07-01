@@ -1,112 +1,68 @@
 import * as THREE from "three";
-import { useMemo, type JSX, memo } from "react";
-import type { TSharkBehavior } from "./shark";
+import Shark, { type IShark, type TSharkBehavior } from "./shark";
+import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
-import Shark from "./shark";
 
-// Shark spawner component
-function SpawnSharks(): JSX.Element {
-  const behaviors: TSharkBehavior[] = [
-    "hunter",
-    // "patroller",
-    "ambusher",
-    // "cruiser",
-  ];
+const sharkCount = 4;
+const halfBoundX = WORLD.x / 2;
+const halfBoundZ = WORLD.z / 2;
 
-  // Generate shark data
-  const sharkData = useMemo(() => {
-    const sharkCount = 3; // Few sharks as they're apex predators
-    const halfBoundsX = WORLD.x * 0.4;
-    const halfBoundsY = WORLD.y * 0.4;
-    const halfBoundsZ = WORLD.z * 0.4;
+const behaviors: TSharkBehavior[] = ["swim", "zigzag", "stopAndMove"];
 
-    return Array.from({ length: sharkCount }, (_, i) => {
+function SpawnSharks() {
+  const sharks: IShark[] = useMemo(() => {
+    return Array.from({ length: sharkCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
-      const initialDirection = new THREE.Vector3(
+
+      // Create unique Vector3 and Euler instances for each shark
+      const position = new THREE.Vector3(
+        Math.random() * halfBoundX * (1 + Math.random()),
+        -10 + (Math.random() - 0.5) * 20, // Keep sharks underwater
+        Math.random() * halfBoundZ * (1 + Math.random())
+      );
+
+      const direction = new THREE.Vector3(
         (Math.random() - 0.5) * 2,
-        (Math.random() - 0.5) * 0.5,
+        (Math.random() - 0.5) * 0.3, // Reduce vertical movement
         (Math.random() - 0.5) * 2
       ).normalize();
 
+      // Generate initial target position for each shark
+      const targetX = (Math.random() - 0.5) * halfBoundX * 1.5;
+      const targetY = -10 + (Math.random() - 0.5) * 20; // Keep targets underwater
+      const targetZ = (Math.random() - 0.5) * halfBoundZ * 1.5;
+
       return {
-        id: i,
-        position: new THREE.Vector3(
-          (Math.random() - 0.5) * halfBoundsX * 2,
-          (Math.random() - 0.5) * halfBoundsY * 2,
-          (Math.random() - 0.5) * halfBoundsZ * 2
-        ),
-        velocity: new THREE.Vector3(0, 0, 0),
-        direction: initialDirection,
-        rotation: new THREE.Euler(0, 0, 0),
+        id: index,
         behavior,
-        speed: 4 + Math.random() * 8, // Fast predators
-        scale: 0.9 + Math.random() * 0.4, // Varied shark sizes
-        // Initialize behavior-specific data
-        huntingTarget: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.x * 0.6,
-          (Math.random() - 0.5) * WORLD.y * 0.4,
-          (Math.random() - 0.5) * WORLD.z * 0.6
-        ),
-        patrolRadius: 30 + Math.random() * 25,
-        patrolCenter: new THREE.Vector3(
-          (Math.random() - 0.5) * WORLD.x * 0.5,
-          (Math.random() - 0.5) * WORLD.y * 0.3,
-          (Math.random() - 0.5) * WORLD.z * 0.5
-        ),
-        ambushTimer: Math.random() * 8,
-        isAmbushing: false,
-        burstSpeed: 15,
-        behaviorTimer: Math.random() * 5,
-        lastAnimTime: 0,
-        swimSpeed: 0,
-        // Initialize rotation values
-        targetRotationY: Math.atan2(initialDirection.x, initialDirection.z),
-        currentRotationY: Math.atan2(initialDirection.x, initialDirection.z),
-        // Aggression
-        aggressionLevel: Math.random() * 0.5, // Start with some base aggression
+        position: position,
+        velocity: new THREE.Vector3(0, 0, 0),
+        direction: direction,
+        rotation: new THREE.Euler(0, 0, 0),
+        speed: 6 + Math.random() * 3, // Increase speed range
+        behaviorTimer: Math.random() * 2, // Randomize initial timer
+
+        targetDirection: direction.clone(),
+        hasReachedTarget: false,
+        targetThreshold: 8.0, // Increase threshold for more fluid movement
+        targetPosition: new THREE.Vector3(targetX, targetY, targetZ),
+
+        turningSpeed: 1.5 + Math.random() * 0.5, // Vary turning speeds
+        currentSpeed: 3 + Math.random() * 2,
+        desiredSpeed: 3 + Math.random() * 2,
+        currentRotationY: Math.atan2(direction.x, direction.z),
+        targetRotationY: 0,
       };
     });
   }, []);
 
-  // Memoized lighting setup optimized for sharks
-  const lighting = useMemo(
-    () => (
-      <>
-        <ambientLight intensity={0.3} color="#2F4F4F" />
-        <directionalLight
-          position={[15, 25, 15]}
-          intensity={0.7}
-          color="#4682B4"
-          castShadow
-        />
-        <directionalLight
-          position={[-10, 15, -10]}
-          intensity={0.4}
-          color="#708090"
-        />
-        {/* Dramatic underwater lighting */}
-        <spotLight
-          position={[0, 30, 0]}
-          angle={Math.PI / 6}
-          intensity={0.5}
-          color="#B0C4DE"
-          distance={80}
-          penumbra={0.5}
-        />
-      </>
-    ),
-    []
-  );
-
   return (
     <>
-      {lighting}
-      {/* Render sharks */}
-      {sharkData.map((shark) => (
-        <Shark key={shark.id} sharkData={shark} />
+      {sharks.map((shark) => (
+        <Shark key={shark.id} shark={shark} />
       ))}
     </>
   );
 }
 
-export default memo(SpawnSharks);
+export default SpawnSharks;

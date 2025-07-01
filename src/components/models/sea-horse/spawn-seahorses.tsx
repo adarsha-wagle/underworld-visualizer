@@ -3,7 +3,7 @@ import Seahorse, { type ISeahorse, type TSeahorseBehavior } from "./seahorse";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const seahorseCount = 10;
+const seahorseCount = 8;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 const halfBoundY = WORLD.y;

@@ -1,368 +1,163 @@
-import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import React, { useRef } from "react";
+import { useGLTF, useAnimations, Clone } from "@react-three/drei";
 import * as THREE from "three";
-import { type GLTF } from "three-stdlib";
-import { useRef, useMemo, type JSX } from "react";
+import { useFrame } from "@react-three/fiber";
+import type { IDynamicModel } from "../common/types";
+import useModelAi from "../common/use-model-ai";
 
-import { WORLD } from "@/constants/world";
+const MODEL_PATH = "/models/shark-anim.glb";
 
-const MODEL_PATH = "/models/shark.glb";
+const tempVectorSwim = new THREE.Vector3();
 
-// Pre-allocated objects for performance
-const tempVector = new THREE.Vector3();
-const tempVector2 = new THREE.Vector3();
+export type TSharkBehavior = "swim" | "wanderer" | "zigzag" | "stopAndMove";
 
-// Extend the GLTF type for proper typing
-type TSharkGLTF = GLTF & {
-  nodes: {
-    tail?: THREE.Mesh;
-    body?: THREE.Mesh;
-    backFinLeft?: THREE.Mesh;
-    backFinRight?: THREE.Mesh;
-    finLeft?: THREE.Mesh;
-    finRight?: THREE.Mesh;
-    [key: string]: any;
-  };
-  materials: {
-    [key: string]: THREE.Material;
-  };
-};
-
-export type TSharkBehavior = "hunter" | "patroller" | "ambusher" | "cruiser";
-
-interface SharkData {
-  id: number;
-  position: THREE.Vector3;
-  velocity: THREE.Vector3;
-  direction: THREE.Vector3;
-  rotation: THREE.Euler;
+export interface IShark extends IDynamicModel {
   behavior: TSharkBehavior;
   speed: number;
-  scale: number;
-  // Behavior-specific data
-  huntingTarget: THREE.Vector3;
-  patrolRadius: number;
-  patrolCenter: THREE.Vector3;
-  ambushTimer: number;
-  isAmbushing: boolean;
-  burstSpeed: number;
-  behaviorTimer: number;
-  // Animation cache
-  lastAnimTime: number;
-  swimSpeed: number;
-  // Rotation smoothing
-  targetRotationY: number;
-  currentRotationY: number;
-  // Aggression state
-  aggressionLevel: number;
+
+  isMoving?: boolean;
+  originalSpeed?: number;
 }
 
-// Preload model for better performance
+interface ISharkProps {
+  shark: IShark;
+}
+
 useGLTF.preload(MODEL_PATH);
 
-// Helper function to find mesh by name in cloned scene
-const findMeshByName = (
-  scene: THREE.Object3D,
-  name: string
-): THREE.Mesh | null => {
-  let foundMesh: THREE.Mesh | null = null;
-  scene.traverse((child) => {
-    if (child.name === name && child instanceof THREE.Mesh) {
-      foundMesh = child;
-    }
-  });
-  return foundMesh;
-};
-
-// Behavior update functions
-const updateHunter = (shark: SharkData, deltaTime: number): void => {
+// Adds a small random variation to direction every few seconds to simuate swimming behavior
+const updateSwim = (shark: IShark, deltaTime: number): void => {
   shark.behaviorTimer += deltaTime;
-
-  // Update hunting target periodically
-  if (shark.behaviorTimer > 3 + Math.random() * 4) {
-    shark.huntingTarget.set(
-      (Math.random() - 0.5) * WORLD.x * 0.8,
-      (Math.random() - 0.5) * WORLD.y * 0.6,
-      (Math.random() - 0.5) * WORLD.z * 0.8
+  if (shark.behaviorTimer > 2 + Math.random() * 2) {
+    const variation = tempVectorSwim.set(
+      (Math.random() - 0.5) * 0.2,
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.2
     );
+    shark.direction.add(variation.multiplyScalar(0.1)).normalize();
     shark.behaviorTimer = 0;
-    shark.aggressionLevel = Math.min(shark.aggressionLevel + 0.2, 1);
-  }
-
-  // Move towards hunting target
-  tempVector.copy(shark.huntingTarget).sub(shark.position);
-  const distanceToTarget = tempVector.length();
-
-  if (distanceToTarget > 5) {
-    tempVector.normalize();
-    shark.direction.lerp(tempVector, 0.08); // Aggressive pursuit
-
-    // Burst speed when close to target
-    const currentSpeed =
-      distanceToTarget < 20
-        ? shark.speed * (1.5 + shark.aggressionLevel)
-        : shark.speed;
-
-    tempVector2.copy(shark.direction).multiplyScalar(currentSpeed * deltaTime);
-    shark.position.add(tempVector2);
-    shark.velocity.copy(shark.direction).multiplyScalar(currentSpeed);
-  } else {
-    // Reached target, slow down and find new target
-    shark.aggressionLevel = Math.max(shark.aggressionLevel - 0.1, 0);
-    shark.behaviorTimer = 2.5; // Force new target soon
   }
 };
 
-const updatePatroller = (shark: SharkData, time: number): void => {
-  // Patrol in expanding/contracting circles
-  const radiusVariation = Math.sin(time * 0.1) * 10;
-  const currentRadius = shark.patrolRadius + radiusVariation;
-  const angle = time * shark.speed * 0.05;
+const updateZigzag = (shark: IShark, deltaTime: number): void => {
+  const amplitude = 4;
+  const frequency = 0.1;
 
-  const cosAngle = Math.cos(angle);
-  const sinAngle = Math.sin(angle);
+  const sideVector = new THREE.Vector3().copy(shark.direction);
+  sideVector
+    .applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
+    .normalize();
 
-  tempVector.set(
-    cosAngle * currentRadius,
-    Math.sin(time * 0.2) * 5, // Vertical patrol movement
-    sinAngle * currentRadius
-  );
+  const time = shark.behaviorTimer;
+  const offsetAmount = Math.sin(time * frequency * Math.PI * 2) * amplitude;
 
-  shark.position.copy(shark.patrolCenter).add(tempVector);
-  shark.direction.set(-sinAngle, 0, cosAngle);
-  shark.velocity.copy(shark.direction).multiplyScalar(shark.speed);
+  const targetOffset = sideVector.multiplyScalar(offsetAmount);
+  shark.position.add(targetOffset.clone().multiplyScalar(deltaTime));
+
+  shark.behaviorTimer += deltaTime;
 };
 
-const updateAmbusher = (shark: SharkData, deltaTime: number): void => {
-  if (!shark.isAmbushing) {
-    shark.ambushTimer += deltaTime;
-
-    // Stay relatively still while waiting
-    shark.velocity.multiplyScalar(0.95); // Gradual slowdown
-
-    // Trigger ambush
-    if (shark.ambushTimer > 5 + Math.random() * 10) {
-      shark.isAmbushing = true;
-      shark.ambushTimer = 0;
-      shark.burstSpeed = shark.speed * 2.5; // Fast burst
-
-      // Random ambush direction
-      shark.direction
-        .set(
-          (Math.random() - 0.5) * 2,
-          (Math.random() - 0.5) * 0.5,
-          (Math.random() - 0.5) * 2
-        )
-        .normalize();
-    }
-  } else {
-    // Ambush burst
-    shark.ambushTimer += deltaTime;
-
-    tempVector
-      .copy(shark.direction)
-      .multiplyScalar(shark.burstSpeed * deltaTime);
-    shark.position.add(tempVector);
-    shark.velocity.copy(shark.direction).multiplyScalar(shark.burstSpeed);
-
-    // End ambush
-    if (shark.ambushTimer > 2) {
-      shark.isAmbushing = false;
-      shark.ambushTimer = 0;
-      shark.burstSpeed = shark.speed;
-    }
+const updateStopAndMove = (shark: IShark, deltaTime: number): void => {
+  // Initialize properties if not set
+  if (shark.isMoving === undefined) {
+    shark.isMoving = true;
+    shark.originalSpeed = shark.speed;
   }
-};
 
-const updateCruiser = (shark: SharkData, deltaTime: number): void => {
   shark.behaviorTimer += deltaTime;
 
-  // Steady, efficient swimming with occasional direction changes
-  if (shark.behaviorTimer > 6 + Math.random() * 8) {
-    const newDir = tempVector2
-      .set(
-        (Math.random() - 0.5) * 1.5,
-        (Math.random() - 0.5) * 0.3,
-        (Math.random() - 0.5) * 1.5
-      )
-      .normalize();
+  // Change between moving and stopping every 2-4 seconds
+  const switchInterval = 2 + Math.random() * 2;
 
-    shark.direction.lerp(newDir, 0.04); // Smooth direction changes
+  if (shark.behaviorTimer > switchInterval) {
+    shark.isMoving = !shark.isMoving;
     shark.behaviorTimer = 0;
+
+    // Set speed based on current state
+    if (shark.isMoving) {
+      shark.speed = shark.originalSpeed || 1;
+    } else {
+      shark.speed = 0;
+    }
   }
 
-  tempVector.copy(shark.direction).multiplyScalar(shark.speed * deltaTime);
-  shark.position.add(tempVector);
-  shark.velocity.copy(shark.direction).multiplyScalar(shark.speed);
+  // Add slight directional variation when moving (like natural swimming)
+  if (shark.isMoving && shark.behaviorTimer > 0.5) {
+    const variation = tempVectorSwim.set(
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.05,
+      (Math.random() - 0.5) * 0.1
+    );
+    shark.direction.add(variation.multiplyScalar(0.05)).normalize();
+  }
 };
 
-// Optimized boundary wrapping
-const wrapPosition = (position: THREE.Vector3): void => {
-  const halfX = WORLD.x / 2;
-  const halfY = WORLD.y / 2;
-  const halfZ = WORLD.z / 2;
-
-  if (position.x > halfX) position.x = -halfX;
-  else if (position.x < -halfX) position.x = halfX;
-
-  if (position.y > halfY) position.y = -halfY;
-  else if (position.y < -halfY) position.y = halfY;
-
-  if (position.z > halfZ) position.z = -halfZ;
-  else if (position.z < -halfZ) position.z = halfZ;
-};
-
-// Smooth angle interpolation
-const lerpAngle = (from: number, to: number, t: number): number => {
-  let diff = to - from;
-
-  if (diff > Math.PI) diff -= Math.PI * 2;
-  if (diff < -Math.PI) diff += Math.PI * 2;
-
-  return from + diff * t;
-};
-
-// Single shark component with movement
-function Shark({ sharkData }: { sharkData: SharkData }): JSX.Element {
+export default function Shark({ shark }: ISharkProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const sharkGltf = useGLTF(MODEL_PATH) as TSharkGLTF;
+  const { scene, animations } = useGLTF(MODEL_PATH);
+  const { actions } = useAnimations(animations, groupRef);
 
-  // Create cloned scene and cache part references
-  const {
-    clonedScene,
-    tailRef,
-    finLeftRef,
-    finRightRef,
-    backFinLeftRef,
-    backFinRightRef,
-  } = useMemo(() => {
-    const scene = sharkGltf.scene.clone();
-    const tail = findMeshByName(scene, "tail");
-    const finLeft = findMeshByName(scene, "finLeft");
-    const finRight = findMeshByName(scene, "finRight");
-    const backFinLeft = findMeshByName(scene, "backFinLeft");
-    const backFinRight = findMeshByName(scene, "backFinRight");
+  const { move } = useModelAi();
 
-    return {
-      clonedScene: scene,
-      tailRef: tail,
-      finLeftRef: finLeft,
-      finRightRef: finRight,
-      backFinLeftRef: backFinLeft,
-      backFinRightRef: backFinRight,
-    };
-  }, [sharkGltf]);
+  React.useEffect(() => {
+    if (actions && animations.length > 0) {
+      actions[animations[0].name]?.reset().play();
+    }
+  }, [actions, animations]);
 
-  useFrame(({ clock }) => {
+  // Initialize rotation values if not set
+  React.useEffect(() => {
+    if (shark.currentRotationY === undefined) {
+      shark.currentRotationY = Math.atan2(shark.direction.x, shark.direction.z);
+    }
+  }, [shark]);
+
+  useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    const time = clock.getElapsedTime();
-    const deltaTime = Math.min(time - sharkData.lastAnimTime, 0.1);
-    sharkData.lastAnimTime = time;
+    // Move the shark
+    move(shark, delta);
 
-    if (deltaTime === 0) return;
-
-    // Update shark position based on behavior
-    switch (sharkData.behavior) {
-      case "hunter":
-        updateHunter(sharkData, deltaTime);
-        wrapPosition(sharkData.position);
+    // Update shark behavior
+    switch (shark.behavior) {
+      case "swim":
+        updateSwim(shark, delta);
         break;
-      case "patroller":
-        updatePatroller(sharkData, time);
+      case "zigzag":
+        updateZigzag(shark, delta);
         break;
-      case "ambusher":
-        updateAmbusher(sharkData, deltaTime);
-        wrapPosition(sharkData.position);
+      case "stopAndMove":
+        updateStopAndMove(shark, delta);
         break;
-      case "cruiser":
-        updateCruiser(sharkData, deltaTime);
-        wrapPosition(sharkData.position);
+      default:
         break;
     }
 
-    // Apply position and scale
-    groupRef.current.position.copy(sharkData.position);
-    groupRef.current.scale.setScalar(sharkData.scale);
+    // IMPROVED: Even smoother visual updates with different lerp speeds
+    groupRef.current.position.lerp(shark.position, 0.3); // Slightly faster position updates
 
-    // Cache speed calculation
-    sharkData.swimSpeed = sharkData.velocity.length();
-
-    // Smooth rotation towards movement direction
-    if (sharkData.swimSpeed > 0.2) {
-      sharkData.targetRotationY = Math.atan2(
-        sharkData.direction.x,
-        sharkData.direction.z
-      );
-
-      const rotationSpeed = sharkData.isAmbushing ? 0.12 : 0.06;
-      sharkData.currentRotationY = lerpAngle(
-        sharkData.currentRotationY,
-        sharkData.targetRotationY,
-        rotationSpeed
-      );
-    }
-
-    // Apply base rotation
-    groupRef.current.rotation.y = sharkData.currentRotationY;
-
-    // 🦈 Shark animations
-    const swimIntensity = Math.min(sharkData.swimSpeed * 0.08, 1.2);
-    const aggressionMultiplier = 1 + sharkData.aggressionLevel * 0.5;
-    const baseSpeed = (0.4 + swimIntensity * 0.6) * aggressionMultiplier;
-
-    // Body gentle sway (more pronounced when hunting/aggressive)
-    const bodySway =
-      Math.sin(time * baseSpeed) * (0.05 + sharkData.aggressionLevel * 0.02);
-    const bodyPitch = Math.cos(time * baseSpeed * 0.75) * 0.02;
-
-    groupRef.current.rotation.y += bodySway;
-    groupRef.current.rotation.x = bodyPitch;
-
-    // Tail wiggle (more aggressive when hunting)
-    if (tailRef) {
-      const tailSpeed = baseSpeed * 2;
-      const tailIntensity = 0.4 + sharkData.aggressionLevel * 0.2;
-      tailRef.rotation.y = Math.sin(time * tailSpeed) * tailIntensity;
-    }
-
-    // Fins fluttering (synchronized with swimming intensity)
-    if (finLeftRef) {
-      const finSpeed = baseSpeed * 2.5;
-      finLeftRef.rotation.z =
-        Math.sin(time * finSpeed) * (0.1 + swimIntensity * 0.05);
-    }
-
-    if (finRightRef) {
-      const finSpeed = baseSpeed * 2.5;
-      finRightRef.rotation.z =
-        -Math.sin(time * finSpeed) * (0.1 + swimIntensity * 0.05);
-    }
-
-    // Back fins (subtle movement)
-    if (backFinLeftRef) {
-      const backFinSpeed = baseSpeed * 1.5;
-      backFinLeftRef.rotation.z = Math.sin(time * backFinSpeed) * 0.05;
-    }
-
-    if (backFinRightRef) {
-      const backFinSpeed = baseSpeed * 1.5;
-      backFinRightRef.rotation.z = -Math.sin(time * backFinSpeed) * 0.05;
-    }
-
-    // Predator tension - slight scale pulsing when aggressive
-    if (sharkData.aggressionLevel > 0.3) {
-      const tensionScale =
-        1 + Math.sin(time * 3) * 0.01 * sharkData.aggressionLevel;
-      groupRef.current.scale.multiplyScalar(tensionScale);
-    }
+    // Smoother rotation updates
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(
+      groupRef.current.rotation.x,
+      shark.rotation.x,
+      0.1 // Slower for pitch
+    );
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y,
+      shark.rotation.y,
+      0.2 // Medium speed for yaw
+    );
+    groupRef.current.rotation.z = THREE.MathUtils.lerp(
+      groupRef.current.rotation.z,
+      shark.rotation.z,
+      0.15 // Slower for banking effect
+    );
   });
 
   return (
-    <group ref={groupRef}>
-      <primitive object={clonedScene} />
-    </group>
+    <>
+      <ambientLight intensity={0.2} />
+      <Clone object={scene} ref={groupRef} />
+    </>
   );
 }
-
-export default Shark;

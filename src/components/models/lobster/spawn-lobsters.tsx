@@ -3,7 +3,7 @@ import Lobster, { type ILobster, type TLobsterBehavior } from "./lobster";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const sharkCount = 10;
+const lobsterCount = 10;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 
@@ -11,7 +11,7 @@ const behaviors: TLobsterBehavior[] = ["swim", "zigzag", "stopAndMove"];
 
 function SpawnLobsters() {
   const lobsters: ILobster[] = useMemo(() => {
-    return Array.from({ length: sharkCount }, (_, index) => {
+    return Array.from({ length: lobsterCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
 
       // Create unique Vector3 and Euler instances for each lobster

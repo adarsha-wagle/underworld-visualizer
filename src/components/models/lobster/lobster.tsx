@@ -168,10 +168,5 @@ export default function Lobster({ lobster }: ILobsterProps) {
     );
   });
 
-  return (
-    <>
-      <ambientLight intensity={0.2} />
-      <Clone object={scene} ref={groupRef} />
-    </>
-  );
+  return <Clone object={scene} ref={groupRef} />;
 }

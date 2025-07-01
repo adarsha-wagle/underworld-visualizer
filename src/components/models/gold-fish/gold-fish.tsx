@@ -173,7 +173,7 @@ export default function Goldfish({ goldfish }: GoldfishAnimProps) {
 
   return (
     <>
-      <ambientLight intensity={0.2} />
+      <ambientLight intensity={0.1} />
       <Clone object={scene} ref={groupRef} />
     </>
   );

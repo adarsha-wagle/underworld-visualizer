@@ -3,7 +3,7 @@ import Mantaray, { type IMantaRay, type TMantaRayBehavior } from "./manta-ray";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const mantraMantarayCount = 10;
+const mantraMantarayCount = 5;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 

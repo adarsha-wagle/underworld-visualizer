@@ -4,7 +4,7 @@ import Dolphin from "./dolphin";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const dolphinCount = 10;
+const dolphinCount = 6;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 
