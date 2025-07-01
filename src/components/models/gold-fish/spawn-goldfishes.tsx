@@ -1,24 +1,29 @@
 import * as THREE from "three";
-import Shark, { type IShark, type TSharkBehavior } from "./shark";
+import Goldfish, { type IGoldfish, type TGoldfishBehavior } from "./gold-fish";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const sharkCount = 4;
+const seahorseCount = 15;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
+const halfBoundY = WORLD.y;
 
-const behaviors: TSharkBehavior[] = ["swim", "zigzag", "stopAndMove"];
+const behaviors: TGoldfishBehavior[] = ["swim", "stopAndMove", "zigzag"];
 
-function SpawnSharks() {
-  const sharks: IShark[] = useMemo(() => {
-    return Array.from({ length: sharkCount }, (_, index) => {
+function SpawnGoldfishes() {
+  const goldfishes: IGoldfish[] = useMemo(() => {
+    return Array.from({ length: seahorseCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
 
-      // Create unique Vector3 and Euler instances for each shark
+      const xRandom = Math.random() - Math.random();
+      const zRandom = Math.random() - Math.random();
+      const yRandom = Math.random() - Math.random();
+
+      // Create unique Vector3 and Euler instances for each seahorseSeahorse
       const position = new THREE.Vector3(
-        Math.random() * halfBoundX * (1 + Math.random()),
-        -10 + (Math.random() - 0.5) * 20, // Keep sharks underwater
-        Math.random() * halfBoundZ * (1 + Math.random())
+        xRandom * halfBoundX,
+        yRandom * halfBoundY,
+        zRandom * halfBoundZ
       );
 
       const direction = new THREE.Vector3(
@@ -27,10 +32,12 @@ function SpawnSharks() {
         (Math.random() - 0.5) * 2
       ).normalize();
 
-      // Generate initial target position for each shark
+      // Generate initial target position for each seahorseSeahorse
       const targetX = (Math.random() - 0.5) * halfBoundX * 1.5;
       const targetY = -10 + (Math.random() - 0.5) * 20; // Keep targets underwater
       const targetZ = (Math.random() - 0.5) * halfBoundZ * 1.5;
+
+      const targetPosition = new THREE.Vector3(targetX, targetY, targetZ);
 
       return {
         id: index,
@@ -39,30 +46,31 @@ function SpawnSharks() {
         velocity: new THREE.Vector3(0, 0, 0),
         direction: direction,
         rotation: new THREE.Euler(0, 0, 0),
-        speed: 6 + Math.random() * 3, // Increase speed range
+        speed: 1 + Math.random() * 3, // Increase speed range
         behaviorTimer: Math.random() * 2, // Randomize initial timer
 
         targetDirection: direction.clone(),
         hasReachedTarget: false,
         targetThreshold: 8.0, // Increase threshold for more fluid movement
-        targetPosition: new THREE.Vector3(targetX, targetY, targetZ),
+        targetPosition: targetPosition,
 
         turningSpeed: 1.5 + Math.random() * 0.5, // Vary turning speeds
         currentSpeed: 3 + Math.random() * 2,
         desiredSpeed: 3 + Math.random() * 2,
         currentRotationY: Math.atan2(direction.x, direction.z),
         targetRotationY: 0,
+        stopAndMoveTimer: 5 + Math.floor(Math.random() * 10),
       };
     });
   }, []);
 
   return (
     <>
-      {sharks.map((shark) => (
-        <Shark key={shark.id} shark={shark} />
+      {goldfishes.map((goldfish) => (
+        <Goldfish key={goldfish.id} goldfish={goldfish} />
       ))}
     </>
   );
 }
 
-export default SpawnSharks;
+export default SpawnGoldfishes;

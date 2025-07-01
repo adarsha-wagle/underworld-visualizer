@@ -6,7 +6,6 @@ import Loader from "@/components/loader/loader";
 
 import { isDevelopment } from "@/constants/env";
 
-import Lobster from "@/components/models/lobster";
 import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
 import Obstacles from "@/components/obstacles/obstacles";
@@ -19,7 +18,6 @@ function UnderWaterScene() {
       <Environment />
       <Obstacles />
       <Particles />
-      <Lobster />
       <Text
         position={[-100, 5, 100]}
         fontSize={6}

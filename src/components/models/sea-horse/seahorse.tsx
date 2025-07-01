@@ -1,282 +1,149 @@
-import { useGLTF } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import React, { useRef } from "react";
+import { useGLTF, useAnimations, Clone } from "@react-three/drei";
 import * as THREE from "three";
-import { type GLTF } from "three-stdlib";
-import { useRef, useMemo, type JSX } from "react";
-
-import { WORLD } from "@/constants/world";
+import { useFrame } from "@react-three/fiber";
+import type { IDynamicModel } from "../common/types";
+import useModelAi from "../common/use-model-ai";
 
 const MODEL_PATH = "/models/seahorse.glb";
 
-// Pre-allocated objects for performance
-const tempVector = new THREE.Vector3();
-const tempVector2 = new THREE.Vector3();
+const tempVectorSwim = new THREE.Vector3();
 
-// Extend the GLTF type for proper typing
-type TSeaHorseGLTF = GLTF & {
-  nodes: {
-    body?: THREE.Mesh;
-    fin?: THREE.Mesh;
-    [key: string]: any;
-  };
-  materials: {
-    [key: string]: THREE.Material;
-  };
-};
+export type TSeahorseBehavior = "swim" | "stopAndMove";
 
-export type TSeaHorseBehavior = "wanderer" | "circular" | "floater" | "zigzag";
-
-interface SeaHorseData {
-  id: number;
-  position: THREE.Vector3;
-  velocity: THREE.Vector3;
-  direction: THREE.Vector3;
-  rotation: THREE.Euler;
-  behavior: TSeaHorseBehavior;
+export interface ISeahorse extends IDynamicModel {
+  behavior: TSeahorseBehavior;
   speed: number;
-  // Behavior-specific data
-  circleCenter: THREE.Vector3;
-  circleRadius: number;
-  zigzagTimer: number;
-  restTimer: number;
-  behaviorTimer: number;
-  // Animation cache
-  lastAnimTime: number;
-  swimSpeed: number;
-  // Rotation smoothing
-  targetRotationY: number;
-  currentRotationY: number;
+
+  isMoving?: boolean;
+  originalSpeed?: number;
+
+  stopAndMoveTimer: number;
 }
 
-// Preload model for better performance
+interface ISeahorseProps {
+  seahorse: ISeahorse;
+}
+
 useGLTF.preload(MODEL_PATH);
 
-// Helper function to find mesh by name in cloned scene
-const findMeshByName = (
-  scene: THREE.Object3D,
-  name: string
-): THREE.Mesh | null => {
-  let foundMesh: THREE.Mesh | null = null;
-  scene.traverse((child) => {
-    if (child.name === name && child instanceof THREE.Mesh) {
-      foundMesh = child;
-    }
-  });
-  return foundMesh;
-};
-
-// Behavior update functions
-const updateWanderer = (seahorse: SeaHorseData, deltaTime: number): void => {
+// Adds a small random variation to direction every few seconds to simuate swimming behavior
+const updateSwim = (seahorse: ISeahorse, deltaTime: number): void => {
   seahorse.behaviorTimer += deltaTime;
-
-  if (seahorse.behaviorTimer > 2 + Math.random() * 3) {
-    const newDir = tempVector2
-      .set(
-        (Math.random() - 0.5) * 1.2,
-        (Math.random() - 0.5) * 0.3, // Reduced Y movement for seahorses
-        (Math.random() - 0.5) * 1.2
-      )
-      .normalize();
-
-    seahorse.direction.lerp(newDir, 0.05);
+  if (seahorse.behaviorTimer > 2 + Math.random() * 2) {
+    const variation = tempVectorSwim.set(
+      (Math.random() - 0.5) * 0.2,
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.2
+    );
+    seahorse.direction.add(variation.multiplyScalar(0.1)).normalize();
     seahorse.behaviorTimer = 0;
   }
-
-  tempVector
-    .copy(seahorse.direction)
-    .multiplyScalar(seahorse.speed * deltaTime);
-  seahorse.position.add(tempVector);
-  seahorse.velocity.copy(seahorse.direction).multiplyScalar(seahorse.speed);
 };
 
-const updateCircular = (seahorse: SeaHorseData, time: number): void => {
-  const angle = time * seahorse.speed * 0.08; // Slower than goldfish
-  const cosAngle = Math.cos(angle);
-  const sinAngle = Math.sin(angle);
-
-  tempVector.set(
-    cosAngle * seahorse.circleRadius,
-    Math.sin(time * 0.3) * 3, // Gentler vertical movement
-    sinAngle * seahorse.circleRadius
-  );
-  seahorse.position.copy(seahorse.circleCenter).add(tempVector);
-  seahorse.direction.set(-sinAngle, 0, cosAngle);
-  seahorse.velocity.copy(seahorse.direction).multiplyScalar(seahorse.speed);
-};
-
-const updateFloater = (seahorse: SeaHorseData, deltaTime: number): void => {
-  if (seahorse.restTimer > 0) {
-    seahorse.restTimer -= deltaTime;
-    seahorse.velocity.set(0, 0, 0);
-    // Gentle floating motion when resting
-    seahorse.position.y += Math.sin(seahorse?.lastAnimTime * 2) * 0.02;
-    return;
+const updateStopAndMove = (seahorse: ISeahorse, deltaTime: number): void => {
+  // Initialize properties if not set
+  if (seahorse.isMoving === undefined) {
+    seahorse.isMoving = true;
+    seahorse.originalSpeed = seahorse.speed;
   }
 
   seahorse.behaviorTimer += deltaTime;
-  if (seahorse.behaviorTimer > 1.5 + Math.random() * 2.5) {
-    if (Math.random() < 0.8) {
-      // More likely to rest (seahorses are slower)
-      seahorse.restTimer = 1.5 + Math.random() * 3;
+
+  if (seahorse.behaviorTimer > seahorse.stopAndMoveTimer) {
+    seahorse.isMoving = !seahorse.isMoving;
+    seahorse.behaviorTimer = 0;
+
+    // Set speed based on current state
+    if (seahorse.isMoving) {
+      seahorse.speed = seahorse.originalSpeed || 1;
     } else {
-      seahorse.direction
-        .set(
-          (Math.random() - 0.5) * 2,
-          (Math.random() - 0.5) * 0.2,
-          (Math.random() - 0.5) * 2
-        )
-        .normalize();
+      seahorse.speed = 0;
     }
-    seahorse.behaviorTimer = 0;
   }
 
-  tempVector
-    .copy(seahorse.direction)
-    .multiplyScalar(seahorse.speed * 0.2 * deltaTime);
-  seahorse.position.add(tempVector);
-  seahorse.velocity
-    .copy(seahorse.direction)
-    .multiplyScalar(seahorse.speed * 0.2);
+  // Add slight directional variation when moving (like natural swimming)
+  if (seahorse.isMoving && seahorse.behaviorTimer > 0.5) {
+    const variation = tempVectorSwim.set(
+      (Math.random() - 0.5) * 0.1,
+      (Math.random() - 0.5) * 0.05,
+      (Math.random() - 0.5) * 0.1
+    );
+    seahorse.direction.add(variation.multiplyScalar(0.05)).normalize();
+  }
+  if (!seahorse.isMoving) {
+    // Add gentle swaying motion while stopped
+    const time = 0.5;
+
+    const swayAmount = Math.sin(time * 1.5) * 0.01; // Left/right sway
+    const bobAmount = Math.sin(time * 1.2) * 0.015; // Vertical bob
+
+    seahorse.position.x += swayAmount;
+    seahorse.position.y += bobAmount;
+  }
 };
 
-const updateZigzag = (seahorse: SeaHorseData, deltaTime: number): void => {
-  seahorse.zigzagTimer += deltaTime;
-  const zigzagDirection = Math.sin(seahorse.zigzagTimer * 2.5) * 0.6; // Slower zigzag
-
-  tempVector2.copy(seahorse.direction);
-  tempVector2.x += zigzagDirection;
-  tempVector2.normalize();
-
-  tempVector.copy(tempVector2).multiplyScalar(seahorse.speed * deltaTime);
-  seahorse.position.add(tempVector);
-  seahorse.velocity.copy(tempVector2).multiplyScalar(seahorse.speed);
-};
-
-// Optimized boundary wrapping
-const wrapPosition = (position: THREE.Vector3): void => {
-  const halfX = WORLD.x / 2;
-  const halfY = WORLD.y / 2;
-  const halfZ = WORLD.z / 2;
-
-  if (position.x > halfX) position.x = -halfX;
-  else if (position.x < -halfX) position.x = halfX;
-
-  if (position.y > halfY) position.y = -halfY;
-  else if (position.y < -halfY) position.y = halfY;
-
-  if (position.z > halfZ) position.z = -halfZ;
-  else if (position.z < -halfZ) position.z = halfZ;
-};
-
-// Smooth angle interpolation
-const lerpAngle = (from: number, to: number, t: number): number => {
-  let diff = to - from;
-
-  // Handle wrap-around
-  if (diff > Math.PI) diff -= Math.PI * 2;
-  if (diff < -Math.PI) diff += Math.PI * 2;
-
-  return from + diff * t;
-};
-
-// Single seahorse component with movement
-function SeaHorse({
-  seahorseData,
-}: {
-  seahorseData: SeaHorseData;
-}): JSX.Element {
+export default function Seahorse({ seahorse }: ISeahorseProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const seaHorseGltf = useGLTF(MODEL_PATH) as TSeaHorseGLTF;
+  const { scene, animations } = useGLTF(MODEL_PATH);
+  const { actions } = useAnimations(animations, groupRef);
 
-  // Create cloned scene and cache fin reference
-  const { clonedScene, finRef } = useMemo(() => {
-    const scene = seaHorseGltf.scene.clone();
-    const fin = findMeshByName(scene, "fin");
+  const { move } = useModelAi();
 
-    return {
-      clonedScene: scene,
-      finRef: fin,
-    };
-  }, [seaHorseGltf]);
+  React.useEffect(() => {
+    if (actions && animations.length > 0) {
+      actions[animations[0].name]?.reset().play();
+    }
+  }, [actions, animations]);
 
-  useFrame(({ clock }) => {
+  // Initialize rotation values if not set
+  React.useEffect(() => {
+    if (seahorse.currentRotationY === undefined) {
+      seahorse.currentRotationY = Math.atan2(
+        seahorse.direction.x,
+        seahorse.direction.z
+      );
+    }
+  }, [seahorse]);
+
+  useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    const time = clock.getElapsedTime();
-    const deltaTime = Math.min(time - seahorseData?.lastAnimTime, 0.1);
-    seahorseData.lastAnimTime = time;
+    // Move the seahorse
+    move(seahorse, delta);
 
-    if (deltaTime === 0) return;
-
-    // Update seahorse position based on behavior
-    switch (seahorseData.behavior) {
-      case "wanderer":
-        updateWanderer(seahorseData, deltaTime);
-        wrapPosition(seahorseData.position);
+    // Update seahorse behavior
+    switch (seahorse.behavior) {
+      case "swim":
+        updateSwim(seahorse, delta);
         break;
-      case "circular":
-        updateCircular(seahorseData, time);
+      case "stopAndMove":
+        updateStopAndMove(seahorse, delta);
         break;
-      case "floater":
-        updateFloater(seahorseData, deltaTime);
-        wrapPosition(seahorseData.position);
-        break;
-      case "zigzag":
-        updateZigzag(seahorseData, deltaTime);
-        wrapPosition(seahorseData.position);
+      default:
         break;
     }
 
-    // Apply position
-    groupRef.current.position.copy(seahorseData.position);
+    // IMPROVED: Even smoother visual updates with different lerp speeds
+    groupRef.current.position.lerp(seahorse.position, 0.3); // Slightly faster position updates
 
-    // Cache speed calculation
-    seahorseData.swimSpeed = seahorseData.velocity.length();
-
-    // Smooth rotation towards movement direction (only if moving significantly)
-    if (seahorseData.swimSpeed > 0.05) {
-      // Calculate target Y rotation from direction vector
-      seahorseData.targetRotationY = Math.atan2(
-        seahorseData.direction.x,
-        seahorseData.direction.z
-      );
-
-      // Smooth interpolation of rotation
-      seahorseData.currentRotationY = lerpAngle(
-        seahorseData.currentRotationY,
-        seahorseData.targetRotationY,
-        0.08 // Slower rotation for seahorses
-      );
-    }
-
-    // Apply base rotation
-    groupRef.current.rotation.y = seahorseData.currentRotationY;
-
-    // 🎐 Animate fin with movement-based speed
-    if (finRef) {
-      const finSpeed = seahorseData.swimSpeed > 0.1 ? 10 : 5; // Faster when moving
-      finRef.rotation.z = Math.sin(time * finSpeed) * 0.2;
-    }
-
-    // 🌊 Apply all secondary animations in one go to reduce jitter
-    const gentleSway =
-      Math.sin(time * 1.5) * 0.03 * (1 + seahorseData.swimSpeed * 0.5);
-    const subtleBob = Math.sin(time * 1.2) * 0.03;
-    const subtleRoll = Math.sin(time * 0.8) * 0.02;
-
-    // Apply secondary rotations
-    groupRef.current.rotation.z = gentleSway * 0.1;
-    groupRef.current.rotation.x = subtleRoll;
-
-    // Apply subtle bobbing to position
-    groupRef.current.position.y += subtleBob;
+    // Smoother rotation updates
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(
+      groupRef.current.rotation.x,
+      seahorse.rotation.x,
+      0.1 // Slower for pitch
+    );
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y,
+      seahorse.rotation.y,
+      0.2 // Medium speed for yaw
+    );
+    groupRef.current.rotation.z = THREE.MathUtils.lerp(
+      groupRef.current.rotation.z,
+      seahorse.rotation.z,
+      0.15 // Slower for banking effect
+    );
   });
 
-  return (
-    <group ref={groupRef}>
-      <primitive object={clonedScene} />
-    </group>
-  );
+  return <Clone object={scene} ref={groupRef} />;
 }
-
-export default SeaHorse;

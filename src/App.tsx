@@ -1,5 +1,3 @@
-import { Stats } from "@react-three/drei";
-
 import AppProvider from "./providers.tsx/providers";
 
 import "./App.css";
@@ -16,7 +14,6 @@ export default function App() {
       <div className="h-screen w-screen relative">
         <SectionVisualizerContainer />
         <DialogContainer />
-        <Stats />
       </div>
     </AppProvider>
   );

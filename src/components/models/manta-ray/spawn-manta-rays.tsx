@@ -1,24 +1,24 @@
 import * as THREE from "three";
-import Shark, { type IShark, type TSharkBehavior } from "./shark";
+import Mantaray, { type IMantaRay, type TMantaRayBehavior } from "./manta-ray";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const sharkCount = 4;
+const mantraMantarayCount = 5;
 const halfBoundX = WORLD.x / 2;
 const halfBoundZ = WORLD.z / 2;
 
-const behaviors: TSharkBehavior[] = ["swim", "zigzag", "stopAndMove"];
+const behaviors: TMantaRayBehavior[] = ["swim"];
 
-function SpawnSharks() {
-  const sharks: IShark[] = useMemo(() => {
-    return Array.from({ length: sharkCount }, (_, index) => {
+function SpawnMantarays() {
+  const mantarays: IMantaRay[] = useMemo(() => {
+    return Array.from({ length: mantraMantarayCount }, (_, index) => {
       const behavior = behaviors[Math.floor(Math.random() * behaviors.length)];
 
-      // Create unique Vector3 and Euler instances for each shark
+      // Create unique Vector3 and Euler instances for each mantraMantaray
       const position = new THREE.Vector3(
-        Math.random() * halfBoundX * (1 + Math.random()),
-        -10 + (Math.random() - 0.5) * 20, // Keep sharks underwater
-        Math.random() * halfBoundZ * (1 + Math.random())
+        (Math.random() - 0.5) * halfBoundX * 1.5,
+        -10 + (Math.random() - 0.5) * 20, // Keep mantarays underwater
+        (Math.random() - 0.5) * halfBoundZ * 1.5
       );
 
       const direction = new THREE.Vector3(
@@ -27,7 +27,7 @@ function SpawnSharks() {
         (Math.random() - 0.5) * 2
       ).normalize();
 
-      // Generate initial target position for each shark
+      // Generate initial target position for each mantraMantaray
       const targetX = (Math.random() - 0.5) * halfBoundX * 1.5;
       const targetY = -10 + (Math.random() - 0.5) * 20; // Keep targets underwater
       const targetZ = (Math.random() - 0.5) * halfBoundZ * 1.5;
@@ -39,7 +39,7 @@ function SpawnSharks() {
         velocity: new THREE.Vector3(0, 0, 0),
         direction: direction,
         rotation: new THREE.Euler(0, 0, 0),
-        speed: 6 + Math.random() * 3, // Increase speed range
+        speed: 2 + Math.random() * 3, // Increase speed range
         behaviorTimer: Math.random() * 2, // Randomize initial timer
 
         targetDirection: direction.clone(),
@@ -58,11 +58,11 @@ function SpawnSharks() {
 
   return (
     <>
-      {sharks.map((shark) => (
-        <Shark key={shark.id} shark={shark} />
+      {mantarays.map((mantaray) => (
+        <Mantaray key={mantaray.id} mantaray={mantaray} />
       ))}
     </>
   );
 }
 
-export default SpawnSharks;
+export default SpawnMantarays;
