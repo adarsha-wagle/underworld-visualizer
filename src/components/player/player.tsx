@@ -2,22 +2,13 @@ import { useRef, useEffect } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { PointerLockControls } from "@react-three/drei";
+import { WORLD } from "@/constants/world";
 import { useKeyboardControls } from "../../hooks/use-keyboard-controls";
 
 const CAMERA_ROTATION_SPEED = 0.2;
 const PLAYER_SPEED = 5; // base speed in units/sec
 const SHIFT_MULTIPLIER = 2;
 const SMOOTHING = 0.1; // lower = smoother (0.05-0.15 is good range)
-
-// Define your world boundaries
-const WORLD_BOUNDS = {
-  minX: -100,
-  maxX: 100,
-  minY: -15,
-  maxY: 15,
-  minZ: -100,
-  maxZ: 100,
-};
 
 function Player() {
   const ref = useRef<THREE.Group>(null!);
@@ -68,18 +59,18 @@ function Player() {
     // Clamp position within world bounds
     ref.current.position.x = THREE.MathUtils.clamp(
       ref.current.position.x,
-      WORLD_BOUNDS.minX,
-      WORLD_BOUNDS.maxX
+      -WORLD.x,
+      WORLD.x
     );
     ref.current.position.y = THREE.MathUtils.clamp(
       ref.current.position.y,
-      WORLD_BOUNDS.minY,
-      WORLD_BOUNDS.maxY
+      -WORLD.y,
+      WORLD.y
     );
     ref.current.position.z = THREE.MathUtils.clamp(
       ref.current.position.z,
-      WORLD_BOUNDS.minZ,
-      WORLD_BOUNDS.maxZ
+      -WORLD.z,
+      WORLD.z
     );
 
     const boundaryHit =
