@@ -43,9 +43,9 @@ const Menu = ({ closeDialog }: TMenuProps) => {
         {/* Header */}
         <div className="text-center ">
           <h1 className="text-7xl font-bold bg-gradient-to-r bg-clip-text text-white mb-2">
-            Underworld Audio{" "}
+            Welcome To Adarsha Wagle's
             <span className="relative">
-              Portal
+              Mystical Depths
               <Sparkles className="w-4 h-4 text-blue-300 absolute top-5 -right-1 animate-spin" />
             </span>
           </h1>
