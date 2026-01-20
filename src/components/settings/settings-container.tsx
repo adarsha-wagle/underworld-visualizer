@@ -69,16 +69,16 @@ const profileOptions = [
   //   icon: Briefcase,
   // },
   {
-    id: 3,
-    label: "Contact",
-    value: "contact",
-    icon: Mail,
-  },
-  {
     id: 4,
     label: "Blogs",
     value: "blogs",
     icon: Newspaper,
+  },
+  {
+    id: 3,
+    label: "Contact",
+    value: "contact",
+    icon: Mail,
   },
 ];
 
