@@ -14,9 +14,9 @@ import {
   Volume2,
   ArrowLeft,
   User,
-  Briefcase,
   Info,
   Mail,
+  Newspaper,
 } from "lucide-react";
 import Help from "./help";
 import Controls from "./controls";
@@ -24,8 +24,9 @@ import Display from "./display";
 import Volume from "./volume";
 import { Button } from "../ui/button";
 import About from "./about-me";
-import Projects from "./projects";
+// import Projects from "./projects";
 import Contact from "./contact";
+import Blogs from "./blogs";
 
 const appSettingsOptions = [
   {
@@ -61,17 +62,23 @@ const profileOptions = [
     value: "about",
     icon: Info,
   },
-  {
-    id: 2,
-    label: "Projects",
-    value: "projects",
-    icon: Briefcase,
-  },
+  // {
+  //   id: 2,
+  //   label: "Projects",
+  //   value: "projects",
+  //   icon: Briefcase,
+  // },
   {
     id: 3,
     label: "Contact",
     value: "contact",
     icon: Mail,
+  },
+  {
+    id: 4,
+    label: "Blogs",
+    value: "blogs",
+    icon: Newspaper,
   },
 ];
 
@@ -175,16 +182,18 @@ const SettingsContainer = () => {
                   <TabsContent value="help" className="h-full mt-0">
                     <Help />
                   </TabsContent>
-
                   {/* Profile Content */}
                   <TabsContent value="about" className="h-full mt-0">
                     <About />
                   </TabsContent>
-                  <TabsContent value="projects" className="h-full mt-0">
+                  {/* <TabsContent value="projects" className="h-full mt-0">
                     <Projects />
-                  </TabsContent>
+                  </TabsContent> */}
                   <TabsContent value="contact" className="h-full mt-0">
                     <Contact />
+                  </TabsContent>{" "}
+                  <TabsContent value="blogs" className="h-full mt-0">
+                    <Blogs />
                   </TabsContent>
                 </div>
               </Card>
