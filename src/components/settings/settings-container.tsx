@@ -12,21 +12,21 @@ import {
   Gamepad2,
   Monitor,
   Volume2,
-  ArrowLeft,
   User,
   Info,
   Mail,
   Newspaper,
+  Briefcase,
 } from "lucide-react";
 import Help from "./help";
 import Controls from "./controls";
 import Display from "./display";
 import Volume from "./volume";
-import { Button } from "../ui/button";
 import About from "./about-me";
 // import Projects from "./projects";
 import Contact from "./contact";
 import Blogs from "./blogs";
+import Projects from "./projects";
 
 const appSettingsOptions = [
   {
@@ -62,12 +62,12 @@ const profileOptions = [
     value: "about",
     icon: Info,
   },
-  // {
-  //   id: 2,
-  //   label: "Projects",
-  //   value: "projects",
-  //   icon: Briefcase,
-  // },
+  {
+    id: 2,
+    label: "Projects",
+    value: "projects",
+    icon: Briefcase,
+  },
   {
     id: 4,
     label: "Blogs",
@@ -83,10 +83,6 @@ const profileOptions = [
 ];
 
 const SettingsContainer = () => {
-  const goToMenu = () => {
-    window.location.href = "/";
-  };
-
   return (
     <div className="w-full h-screen p-6 relative">
       <div className="max-w-7xl mx-auto h-full">
@@ -186,9 +182,9 @@ const SettingsContainer = () => {
                   <TabsContent value="about" className="h-full mt-0">
                     <About />
                   </TabsContent>
-                  {/* <TabsContent value="projects" className="h-full mt-0">
+                  <TabsContent value="projects" className="h-full mt-0">
                     <Projects />
-                  </TabsContent> */}
+                  </TabsContent>
                   <TabsContent value="contact" className="h-full mt-0">
                     <Contact />
                   </TabsContent>{" "}
@@ -200,15 +196,6 @@ const SettingsContainer = () => {
             </div>
           </div>
         </Tabs>
-      </div>
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-        <Button
-          className="bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-500 hover:to-slate-600 text-white py-4 px-8 rounded-xl shadow-2xl hover:shadow-slate-500/30 transform hover:scale-105 transition-all duration-300 border-2 border-slate-400/50 hover:border-slate-300/70 text-lg"
-          onClick={goToMenu}
-        >
-          <ArrowLeft className="w-6 h-6 mr-3" />
-          Go to Menu
-        </Button>
       </div>
     </div>
   );

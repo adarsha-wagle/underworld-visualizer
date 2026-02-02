@@ -4,18 +4,18 @@ const Blogs = () => {
   const blogs = [
     {
       id: 1,
-      title: "Understanding 'Key' in React And, Why It Matters",
+      title: "Understanding 'Key' in React And Why It Matters",
       excerpt:
         "When working with lists in React, you've probably seen a warning about missing key props...",
       date: "Jan 20, 2026",
       readTime: "12 min read",
       tags: ["React", "Performance"],
       isFeatured: true,
-      link: "https://dev.to/adarsha_wagle_6b218268d02/understanding-keys-in-react-why-they-matter-1h7i",
+      link: "https://medium.com/@awagle010/understanding-key-in-react-and-why-it-matters-3bb86fdf796f",
     },
     {
       id: 2,
-      title: "Mastering TypeScript for Web Development",
+      title: "Error handling in React",
       excerpt:
         "A comprehensive guide to leveraging TypeScript's powerful type system.",
       date: "Jan 10, 2025",

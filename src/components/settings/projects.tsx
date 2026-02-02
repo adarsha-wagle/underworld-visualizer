@@ -11,63 +11,21 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
-      title: "E-Commerce Platform",
+      title: "Khaja K Khaney",
       description:
-        "A full-featured e-commerce solution with cart management, payment integration, and admin dashboard.",
-      techStack: ["React", "Node.js", "MongoDB", "Stripe"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com/yourusername/project1",
+        "A site that finally answers the daily headache: khaja k khaney?",
+      techStack: ["NextJs", "Node.js", "MongoDB"],
+      liveUrl: "https://www.khajakkhaney.com",
       featured: true,
     },
     {
       id: 2,
-      title: "Task Management App",
+      title: "Dashboard Essentials",
       description:
-        "A collaborative task management tool with real-time updates and team workspaces.",
-      techStack: ["TypeScript", "Next.js", "PostgreSQL"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com/yourusername/project2",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "Weather Dashboard",
-      description:
-        "Real-time weather tracking with location-based forecasts and interactive maps.",
-      techStack: ["React", "Tailwind", "API"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com/yourusername/project3",
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "Portfolio Website",
-      description:
-        "A modern portfolio showcasing projects and skills with smooth animations.",
-      techStack: ["React", "Framer Motion"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com/yourusername/project4",
-      featured: false,
-    },
-    {
-      id: 5,
-      title: "Chat Application",
-      description:
-        "Real-time messaging app with group chats, file sharing, and notifications.",
-      techStack: ["React", "Socket.io", "Express"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com/yourusername/project5",
-      featured: false,
-    },
-    {
-      id: 6,
-      title: "Blog CMS",
-      description:
-        "A content management system for creating and managing blog posts with markdown support.",
-      techStack: ["Next.js", "Prisma", "MDX"],
-      liveUrl: "https://example.com",
-      githubUrl: "https://github.com/yourusername/project6",
-      featured: false,
+        "A Collection of useful dashboard components like input, charts, tables, etc. and integreated with react hook form, zod, react query, etc",
+      techStack: ["TypeScript", "ReactJs", "Tailwind CSS", "Tanstack Router"],
+      githubUrl: "https://github.com/adarsha-wagle/dashboard-essentials",
+      liveUrl: "https://github.com/adarsha-wagle/dashboard-essentials",
     },
   ];
 
