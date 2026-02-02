@@ -7,7 +7,7 @@ const tempVectorMove = new THREE.Vector3();
 
 function useModelAi() {
   const generateNewPosition = (
-    dolphin: IDynamicModel
+    dolphin: IDynamicModel,
   ): [number, number, number] => {
     const { position, direction } = dolphin;
 
@@ -34,18 +34,18 @@ function useModelAi() {
     // 6. Clamp within world bounds
     const clampedX = THREE.MathUtils.clamp(
       rawPosition.x,
-      -WORLD.x / 2,
-      WORLD.x / 2
+      -WORLD.x / 1.1,
+      WORLD.x / 1.1,
     );
     const clampedY = THREE.MathUtils.clamp(
       rawPosition.y,
       -WORLD.y * 0.2,
-      WORLD.y * 0.2
+      WORLD.y * 0.2,
     );
     const clampedZ = THREE.MathUtils.clamp(
       rawPosition.z,
       -WORLD.z / 2,
-      WORLD.z / 2
+      WORLD.z / 2,
     );
 
     return [clampedX, clampedY, clampedZ];
@@ -53,7 +53,7 @@ function useModelAi() {
 
   const move = (dolphin: IDynamicModel, deltaTime: number): void => {
     const distanceToTarget = dolphin.position.distanceTo(
-      dolphin.targetPosition
+      dolphin.targetPosition,
     );
 
     // Check if target is reached
@@ -156,7 +156,7 @@ function useModelAi() {
     dolphin.rotation.x = THREE.MathUtils.lerp(
       dolphin.rotation.x,
       pitchTarget,
-      deltaTime * 2
+      deltaTime * 2,
     );
   };
 

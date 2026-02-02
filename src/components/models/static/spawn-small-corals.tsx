@@ -6,11 +6,11 @@ interface IRedSpawnSmallCoralsProps {
   count?: number;
 }
 
-const halfBoundX = WORLD.x / 2;
-const halfBoundZ = WORLD.z / 2;
-const halfBoundY = WORLD.y / 2;
+const halfBoundX = WORLD.x / 1.2;
+const halfBoundZ = WORLD.z / 1.2;
+const halfBoundY = WORLD.y / 1.2;
 
-function SpawnSmallCorals({ count = 40 }: IRedSpawnSmallCoralsProps) {
+function SpawnSmallCorals({ count = 70 }: IRedSpawnSmallCoralsProps) {
   const smallCorals = useMemo(() => {
     const items = [];
 

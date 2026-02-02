@@ -17,7 +17,7 @@ const coralColors = [
   "#C44D58",
 ];
 
-function Corals({ count = 10 }: CoralsProps) {
+function Corals({ count = 20 }: CoralsProps) {
   const corals = useMemo(() => {
     const formations = [];
 

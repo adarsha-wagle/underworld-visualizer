@@ -3,9 +3,9 @@ import Whale, { type IWhale, type TWhaleBehavior } from "./whale";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const whaleCount = 3;
-const halfBoundX = WORLD.x / 2;
-const halfBoundZ = WORLD.z / 2;
+const whaleCount = 5;
+const halfBoundX = WORLD.x / 1.2;
+const halfBoundZ = WORLD.z / 1.2;
 const halfBoundY = WORLD.y;
 
 const behaviors: TWhaleBehavior[] = ["swim", "stopAndMove"];
@@ -23,13 +23,13 @@ function SpawnWhales() {
       const position = new THREE.Vector3(
         xRandom * halfBoundX,
         yRandom * halfBoundY,
-        zRandom * halfBoundZ
+        zRandom * halfBoundZ,
       );
 
       const direction = new THREE.Vector3(
         (Math.random() - 0.5) * 2,
         (Math.random() - 0.5) * 0.3, // Reduce vertical movement
-        (Math.random() - 0.5) * 2
+        (Math.random() - 0.5) * 2,
       ).normalize();
 
       // Generate initial target position for each whaleWhale

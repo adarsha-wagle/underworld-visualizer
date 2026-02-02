@@ -4,7 +4,6 @@ import KelpForest from "../kelp-forest/kelp-forest";
 import SpawnAnemoneCorals from "../models/static/spawn-anemone-corals";
 import SpawnSmallCorals from "../models/static/spawn-small-corals";
 import SpawnRedCorals from "../models/static/spawn-red-corals";
-import SpawnSeaCorals from "../models/static/spawn-sea-corals";
 import SpawnLobsters from "../models/lobster/spawn-lobsters";
 import SpawnDolphins from "../models/dolphin/spawn-dolphins";
 import SpawnSeahorses from "../models/sea-horse/spawn-seahorses";
@@ -13,7 +12,6 @@ import Ship from "../models/static/ship";
 import SpawnGoldfishes from "../models/gold-fish/spawn-goldfishes";
 import SpawnSharks from "../models/shark/spawn-sharks";
 import SpawnWhales from "../models/whale/spawn-whales";
-// import SpawnAnglerFish from "../models/angler-fish/spawn-angler-fish";
 
 function Obstacles() {
   return (
@@ -24,7 +22,6 @@ function Obstacles() {
       <Bubbles />
       <SpawnRedCorals />
       <SpawnAnemoneCorals />
-      <SpawnSeaCorals />
       <SpawnSmallCorals />
 
       {/* Dynamic Models */}

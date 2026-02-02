@@ -4,9 +4,9 @@ import Dolphin from "./dolphin";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const dolphinCount = 6;
-const halfBoundX = WORLD.x / 2;
-const halfBoundZ = WORLD.z / 2;
+const dolphinCount = 12;
+const halfBoundX = WORLD.x / 1.4;
+const halfBoundZ = WORLD.z / 1.4;
 
 const behaviors: TDolphinBehavior[] = ["swim"];
 
@@ -17,15 +17,15 @@ function SpawnDolphins() {
 
       // Create unique Vector3 and Euler instances for each dolphin
       const position = new THREE.Vector3(
-        (Math.random() - 0.5) * halfBoundX * 1.5,
+        (Math.random() - 0.5) * halfBoundX * 1.8,
         -10 + (Math.random() - 0.5) * 20, // Keep dolphins underwater
-        (Math.random() - 0.5) * halfBoundZ * 1.5
+        (Math.random() - 0.5) * halfBoundZ * 1.8,
       );
 
       const direction = new THREE.Vector3(
         (Math.random() - 0.5) * 2,
         (Math.random() - 0.5) * 0.3, // Reduce vertical movement
-        (Math.random() - 0.5) * 2
+        (Math.random() - 0.5) * 2,
       ).normalize();
 
       // Generate initial target position for each dolphin

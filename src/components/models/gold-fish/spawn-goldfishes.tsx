@@ -3,9 +3,9 @@ import Goldfish, { type IGoldfish, type TGoldfishBehavior } from "./gold-fish";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const seahorseCount = 15;
-const halfBoundX = WORLD.x / 2;
-const halfBoundZ = WORLD.z / 2;
+const seahorseCount = 30;
+const halfBoundX = WORLD.x / 1.1;
+const halfBoundZ = WORLD.z / 1.1;
 const halfBoundY = WORLD.y;
 
 const behaviors: TGoldfishBehavior[] = ["swim", "stopAndMove", "zigzag"];
@@ -23,13 +23,13 @@ function SpawnGoldfishes() {
       const position = new THREE.Vector3(
         xRandom * halfBoundX,
         yRandom * halfBoundY,
-        zRandom * halfBoundZ
+        zRandom * halfBoundZ,
       );
 
       const direction = new THREE.Vector3(
         (Math.random() - 0.5) * 2,
         (Math.random() - 0.5) * 0.3, // Reduce vertical movement
-        (Math.random() - 0.5) * 2
+        (Math.random() - 0.5) * 2,
       ).normalize();
 
       // Generate initial target position for each seahorseSeahorse

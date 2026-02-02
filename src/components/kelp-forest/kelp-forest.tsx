@@ -6,7 +6,7 @@ interface KelpForestProps {
   count?: number;
 }
 
-function KelpForest({ count = 30 }: KelpForestProps) {
+function KelpForest({ count = 60 }: KelpForestProps) {
   const kelpStrands = useMemo(() => {
     const strands = [];
 

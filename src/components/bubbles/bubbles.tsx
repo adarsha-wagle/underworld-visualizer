@@ -4,18 +4,18 @@ import { memo } from "react";
 
 // Utility to generate a random position on the ground level
 function randomGroundPosition(): [number, number, number] {
-  const x = Math.random() * WORLD.x - WORLD.x / 2;
+  const x = Math.random() * WORLD.x - WORLD.x / 1.2;
   const y = -WORLD.y / 2; // fixed to ground level
-  const z = Math.random() * WORLD.z - WORLD.z / 2;
+  const z = Math.random() * WORLD.z - WORLD.z / 1.2;
 
   return [x, y, z];
 }
 
-const STREAM_COUNT = 15;
+const STREAM_COUNT = 24;
 
 function Bubbles() {
   const streamPositions = Array.from({ length: STREAM_COUNT }, () =>
-    randomGroundPosition()
+    randomGroundPosition(),
   );
 
   return (

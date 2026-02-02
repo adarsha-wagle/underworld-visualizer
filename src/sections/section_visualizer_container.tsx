@@ -10,6 +10,7 @@ import Particles from "@/components/particles/particles";
 import Environment from "@/components/environment/environment";
 import Obstacles from "@/components/obstacles/obstacles";
 import Player from "@/components/player/player";
+import { WORLD } from "@/constants/world";
 // import Turtle from "@/components/models/turtle";
 
 function UnderWaterScene() {
@@ -19,16 +20,16 @@ function UnderWaterScene() {
       <Obstacles />
       <Particles />
       <Text
-        position={[-100, 5, 100]}
+        position={[-WORLD.x, WORLD.y / 2, WORLD.z]}
         fontSize={6}
         color="#4A90E2"
         anchorX="center"
         anchorY="middle"
       >
         UNDERWATER WORLD
-      </Text>{" "}
+      </Text>
       <Text
-        position={[-100, 5, -100]}
+        position={[-WORLD.x, WORLD.y / 2, -WORLD.z]}
         fontSize={6}
         color="#4A90E2"
         anchorX="center"

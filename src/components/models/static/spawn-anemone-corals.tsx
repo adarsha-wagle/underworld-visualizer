@@ -6,11 +6,11 @@ interface IRedCoralsProps {
   count?: number;
 }
 
-const halfBoundX = WORLD.x / 2;
-const halfBoundZ = WORLD.z / 2;
-const halfBoundY = WORLD.y / 2;
+const halfBoundX = WORLD.x / 1.2;
+const halfBoundZ = WORLD.z / 1.2;
+const halfBoundY = WORLD.y / 1.2;
 
-function SpawnAnemoneCorals({ count = 30 }: IRedCoralsProps) {
+function SpawnAnemoneCorals({ count = 50 }: IRedCoralsProps) {
   const anemoneCorals = useMemo(() => {
     const strands = [];
 

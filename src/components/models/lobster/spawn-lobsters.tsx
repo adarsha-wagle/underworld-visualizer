@@ -3,9 +3,9 @@ import Lobster, { type ILobster, type TLobsterBehavior } from "./lobster";
 import { useMemo } from "react";
 import { WORLD } from "@/constants/world";
 
-const lobsterCount = 10;
-const halfBoundX = WORLD.x / 2;
-const halfBoundZ = WORLD.z / 2;
+const lobsterCount = 18;
+const halfBoundX = WORLD.x / 1.4;
+const halfBoundZ = WORLD.z / 1.4;
 
 const behaviors: TLobsterBehavior[] = ["swim", "zigzag", "stopAndMove"];
 
@@ -18,13 +18,13 @@ function SpawnLobsters() {
       const position = new THREE.Vector3(
         Math.random() * halfBoundX * (1 + Math.random()),
         -10 + (Math.random() - 0.5) * 20, // Keep lobsters underwater
-        Math.random() * halfBoundZ * (1 + Math.random())
+        Math.random() * halfBoundZ * (1 + Math.random()),
       );
 
       const direction = new THREE.Vector3(
         (Math.random() - 0.5) * 2,
         (Math.random() - 0.5) * 0.3, // Reduce vertical movement
-        (Math.random() - 0.5) * 2
+        (Math.random() - 0.5) * 2,
       ).normalize();
 
       // Generate initial target position for each lobster
