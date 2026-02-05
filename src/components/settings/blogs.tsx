@@ -11,6 +11,7 @@ const Blogs = () => {
       readTime: "12 min read",
       tags: ["React", "JWT", "Authentication"],
       isFeatured: true,
+      link: "https://medium.com/@awagle010/how-i-implemented-jwt-authentication-in-my-react-app-e4ad361e19b4",
     },
     {
       id: 1,

@@ -23,7 +23,7 @@ const options = [
   },
   {
     id: 5,
-    label: "Shift",
+    label: "Sprint",
     key: "Shift",
   },
   {
