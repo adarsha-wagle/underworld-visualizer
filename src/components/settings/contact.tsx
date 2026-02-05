@@ -8,7 +8,6 @@ import {
   FileCode,
   User,
   MessageSquare,
-  AlertCircleIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";

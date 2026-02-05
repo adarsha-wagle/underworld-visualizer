@@ -24,12 +24,12 @@ const Blogs = () => {
     },
     {
       id: 3,
-      title: "CSS Grid vs Flexbox: When to Use What",
+      title: "How I Implemented JWT Authentication In My React App",
       excerpt:
-        "Understanding the differences and use cases for CSS Grid and Flexbox layouts.",
-      date: "Jan 5, 2025",
-      readTime: "5 min read",
-      tags: ["CSS", "Layout"],
+        "If you are building a React app that needs login, chances are you’ll run into JWT(Json Web Tokens) sooner or later. And I was always confused where to put my tokens.",
+      date: "Feb 4, 2026",
+      readTime: "12 min read",
+      tags: ["React", "JWT", "Authentication"],
     },
   ];
 
