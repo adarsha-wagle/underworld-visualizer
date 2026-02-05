@@ -3,6 +3,16 @@ import { BookOpen, Sparkles, ArrowRight } from "lucide-react";
 const Blogs = () => {
   const blogs = [
     {
+      id: 3,
+      title: "How I Implemented JWT Authentication In My React App",
+      excerpt:
+        "If you are building a React app that needs login, chances are you’ll run into JWT(Json Web Tokens) sooner or later. And I was always confused where to put my tokens.",
+      date: "Feb 4, 2026",
+      readTime: "12 min read",
+      tags: ["React", "JWT", "Authentication"],
+      isFeatured: true,
+    },
+    {
       id: 1,
       title: "Understanding 'Key' in React And Why It Matters",
       excerpt:
@@ -10,7 +20,7 @@ const Blogs = () => {
       date: "Jan 20, 2026",
       readTime: "12 min read",
       tags: ["React", "Performance"],
-      isFeatured: true,
+      isFeatured: false,
       link: "https://medium.com/@awagle010/understanding-key-in-react-and-why-it-matters-3bb86fdf796f",
     },
     {
@@ -21,15 +31,6 @@ const Blogs = () => {
       date: "Jan 10, 2025",
       readTime: "6 min read",
       tags: ["TypeScript", "Web Dev"],
-    },
-    {
-      id: 3,
-      title: "How I Implemented JWT Authentication In My React App",
-      excerpt:
-        "If you are building a React app that needs login, chances are you’ll run into JWT(Json Web Tokens) sooner or later. And I was always confused where to put my tokens.",
-      date: "Feb 4, 2026",
-      readTime: "12 min read",
-      tags: ["React", "JWT", "Authentication"],
     },
   ];
 
